@@ -1,20 +1,21 @@
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 #include "bus.hpp"
 #include "tourist.hpp"
 
 #define INPUT_FILE "input.txt"
 
-bool loadTurists() {
-    ifstream input; input.open(INPUT_FILE);
-    istringstream line; string info;
+bool loadTurists(vector<Tourist*> tourists, vector<Bus*> buses) {
+    ifstream input;
+    input.open(INPUT_FILE);
+    if (!input.is_open()) exit(1);
+    istringstream line;
+    string info;
     /* T,id,name,<list of pois>                     TURIST  */
     /* B,id,cap                                     BUS     */
 
-    vector<Tourist*> tourists;
-    vector<Bus*> buses;
     Tourist* tourist;
     Bus* bus;
 
@@ -24,11 +25,13 @@ bool loadTurists() {
         if (info == "T") {
             int id;
             string name;
-            getline(line, info, ','); id = stoi(info);
-            getline(line, info, ','); name = info;
+            getline(line, info, ',');
+            id = stoi(info);
+            getline(line, info, ',');
+            name = info;
             tourist = new Tourist(id, name);
 
-            while(getline(line, info, ',')){
+            while (getline(line, info, ',')) {
                 int poi = stoi(info);
                 tourist->addPOI(poi);
             }
@@ -38,8 +41,10 @@ bool loadTurists() {
             int id;
             unsigned long long cap;
 
-            getline(line, info, ','); id = stoi(info);
-            getline(line, info, ','); cap = stoi(info);
+            getline(line, info, ',');
+            id = stoi(info);
+            getline(line, info, ',');
+            cap = stoi(info);
 
             bus = new Bus(id, cap);
             buses.push_back(bus);
@@ -47,4 +52,11 @@ bool loadTurists() {
     }
 }
 
-int main() { return 0; }
+int main() {
+    vector<Tourist*> tourists;
+    vector<Bus*> buses;
+    loadTurists(tourists, buses);
+
+    getchar();
+    exit(0);
+}
