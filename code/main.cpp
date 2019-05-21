@@ -4,14 +4,17 @@
 #include "bus.hpp"
 #include "tourist.hpp"
 
-#define TURISTA_FILE "turista.txt"
+#define INPUT_FILE "input.txt"
 
 bool loadTurists() {
-    ifstream input; input.open(TURISTA_FILE);
+    ifstream input; input.open(INPUT_FILE);
     string line;
-    /*T id name <list of pois>*/
+    /* T,id,name,<list of pois>                     TURIST  */
+    /* B,id,cap                                     BUS     */
     while(getline(input, line)){
-        
+        if(line.at(0) == 'T'){
+
+        }
     }
 }
 
