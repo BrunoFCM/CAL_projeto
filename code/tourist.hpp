@@ -8,6 +8,8 @@ class Tourist {
     vector<int> points_of_interest;
 
     public:
+     Tourist(int id, string name);
+
      int getId();
      string getName();
      vector<int> getPOI();
