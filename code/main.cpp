@@ -5,13 +5,14 @@
 #include "bus.hpp"
 #include "tourist.hpp"
 #include "Graph.h"
+using namespace std;
 
 #define INPUT_FILE "input.txt"
 
 bool loadTurists(vector<Tourist*> tourists, vector<Bus*> buses) {
     ifstream input;
     input.open(INPUT_FILE);
-    if (!input.is_open()) exit(1);
+    if (!input.is_open()) return false;
     istringstream line;
     string info;
     /* T,id,name,<list of pois>                     TURIST  */
@@ -51,6 +52,8 @@ bool loadTurists(vector<Tourist*> tourists, vector<Bus*> buses) {
             buses.push_back(bus);
         }
     }
+    if (tourists.empty() || buses.empty()) return false;
+    return true;
 }
 
 int main() {

@@ -1,4 +1,5 @@
 #include "tourist.hpp"
+using namespace std;
 
 Tourist::Tourist(int id, string name) {
     this->id = id;

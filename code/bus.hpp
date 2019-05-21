@@ -1,5 +1,4 @@
 #include "tourist.hpp"
-
 using namespace std;
 
 class Bus {

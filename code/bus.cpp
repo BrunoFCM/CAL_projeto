@@ -1,4 +1,5 @@
 #include "bus.hpp"
+using namespace std;
 
 Bus::Bus(int id, unsigned long long cap) {
     this->id = id;
