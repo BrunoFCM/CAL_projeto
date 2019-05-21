@@ -24,22 +24,25 @@ bool loadTurists() {
         if (info == "T") {
             int id;
             string name;
-            getline(line, info, ',');
-            id = stoi(info);
-            getline(line, info, ',');
-            name = info;
-
+            getline(line, info, ','); id = stoi(info);
+            getline(line, info, ','); name = info;
             tourist = new Tourist(id, name);
 
+            while(getline(line, info, ',')){
+                int poi = stoi(info);
+                tourist->addPOI(poi);
+            }
+
+            tourists.push_back(tourist);
         } else if (info == "B") {
             int id;
             unsigned long long cap;
-            getline(line, info, ',');
-            id = stoi(info);
-            getline(line, info, ',');
-            cap = stoi(info);
+
+            getline(line, info, ','); id = stoi(info);
+            getline(line, info, ','); cap = stoi(info);
 
             bus = new Bus(id, cap);
+            buses.push_back(bus);
         }
     }
 }
