@@ -9,6 +9,8 @@ class Bus {
     /*vector<int> arestas;           arestas que o autocarro passa*/
 
    public:
+    Bus(int id, unsigned long long cap);
+
     int getId() const;
     unsigned long long getCap() const;
     vector<Tourist*> getPassengers() const;
