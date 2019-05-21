@@ -3,3 +3,7 @@
 *.tmp
 code/.vscode
 .project
+.vscode/*
+code/project
+code/*.o
+code/project.exe

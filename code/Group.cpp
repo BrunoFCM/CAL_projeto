@@ -4,11 +4,7 @@
 #include "tourist.hpp"
 
 void Group::addTourist(Tourist * tourist){
-    for(unsigned int i = 0; i < tourists.size(); ++i){
-        if(tourist == tourists[i]){
-            return;
-        }
-    }
+    tourists.insert(tourist);
 
     vector<int> poi = tourist->getPOI;
     for(unsigned int i = 0; i < poi.size(); ++i){
@@ -24,34 +20,40 @@ void Group::addTourist(Tourist * tourist){
 }
 
 void Group::merge(Group group){
-    for(auto i = group.POI.begin; i != group.POI.end ; ++i){
-        addTourist(group.tourists[i]);
+    for(auto i = group.tourists.begin; i != group.tourists.end; ++i){
+        if(tourists.find(*i) == tourists.end){
+            addTourist(*i);
+        }
     }
 }
 
 void Group::removeTourist(Tourist * tourist){
-    for(unsigned int i = 0; i < tourists.size(); ++i){
-        if(tourist == tourists[i]){
-            tourists.erase(tourists.begin + i);
+    auto i = tourists.find(tourist);
 
-            vector<int> poi = tourist->getPOI;
-            for(unsigned int i = 0; i < poi.size(); ++i){
-                int poi_id = poi[i];
-                auto point = POI.find(poi_id);
-                point->second--;
-                if(point->second == 0){
-                    POI.erase(point);
-                }
+    if(i != tourists.end){
+        tourists.erase(i);
+
+        vector<int> poi = tourist->getPOI;
+        for(unsigned int i = 0; i < poi.size(); ++i){
+            int poi_id = poi[i];
+            auto point = POI.find(poi_id);
+            point->second--;
+            if(point->second == 0){
+                POI.erase(point);
             }
-
-            break;
         }
     }
 }
 
 void Group::unmerge(Group group){
-    for(unsigned int i = 0; i < group.tourists.size(); ++i){
-        removeTourist(group.tourists[i]);
+    for(auto i = group.tourists.begin; i != group.tourists.end; ++i){
+        removeTourist(*i);
     }
 }
+
+double Group::getCompatibility(const Group &group) const{
+    
+    return 0;
+}
+
 
