@@ -1,3 +1,5 @@
 # Ignore all gradle folders and files
 
 *.tmp
+code/.vscode
+.project
