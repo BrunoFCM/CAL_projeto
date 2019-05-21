@@ -3,7 +3,6 @@
 #include <sstream>
 #include <string>
 #include "bus.hpp"
-#include "tourist.hpp"
 #include "Graph.h"
 using namespace std;
 
