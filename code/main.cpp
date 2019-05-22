@@ -3,7 +3,6 @@
 #include <sstream>
 #include <string>
 #include "bus.hpp"
-#include "Graph.h"
 #include "Group.hpp"
 using namespace std;
 
@@ -62,7 +61,7 @@ int main() {
     loadTurists(tourists, buses);
 
     Graph graph;
-    graph.getGraphInfo();
+    //graph.getGraphInfo();
 
     getchar();
     exit(0);
