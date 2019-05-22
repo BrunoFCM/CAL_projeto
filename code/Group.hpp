@@ -1,17 +1,18 @@
 #include "tourist.hpp"
+#include "Graph.h"
 
 #include <vector>
 #include <map>
 #include <unordered_set>
 
 class Group {
-    std::map<int, int> POI;
+    std::unordered_set<int> POI;
     std::unordered_set<Tourist *> tourists;
 
+    static vector<Vertex *> vertexReference;
 public:
     void addTourist(Tourist * tourist);
     void removeTourist(Tourist * tourist);
-    void merge(Group group);
-    void unmerge(Group group);
+    Group merge(Group group);
     double getCompatibility(const Group &group) const;
 };

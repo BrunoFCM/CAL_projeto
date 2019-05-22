@@ -61,7 +61,7 @@ int main() {
     vector<Bus*> buses;
     loadTurists(tourists, buses);
 
-    Graph<double> graph;
+    Graph graph;
     graph.getGraphInfo();
 
     getchar();

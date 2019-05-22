@@ -12,155 +12,155 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <unordered_set>
 #include "MutablePriorityQueue.h"
 
-using namespace std;
-
-template <class T> class Edge;
-template <class T> class Graph;
-template <class T> class Vertex;
+class Edge;
+class Graph;
+class Vertex;
 
 #define INF std::numeric_limits<double>::max()
 
+
+/********************** Edge  ****************************/
+
+class Edge {
+	int id;
+	Vertex * dest;      // destination vertex
+	double weight;         // edge weight
+public:
+	Edge(int id, Vertex *d, double w);
+	friend class Graph;
+	friend class Vertex;
+};
+
+Edge::Edge(int id, Vertex *d, double w): id(id), dest(d), weight(w) {}
+
 /************************* Vertex  **************************/
 
-template <class T>
 class Vertex {
-	T info;                // contents
-	vector<Edge<T> > adj;  // outgoing edges
+	int id;                // contents
+	std::vector<Edge> adj;  // outgoing edges
 	bool visited;          // auxiliary field
 	const double X, Y;
 	double dist = 0;
-	Vertex<T> *path = NULL;
+	Vertex *path = NULL;
 	int queueIndex = 0; 		// required by MutablePriorityQueue
 
 	bool processing = false;
-	void addEdge(int id, Vertex<T> *dest, double w);
+	void addEdge(int id, Vertex *dest, double w);
 
 public:
-	Vertex(T in, const double X, const double Y);
-	bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
-	T getInfo() const;
+	Vertex(int id, const double X, const double Y);
+	bool operator<(Vertex & vertex) const; // // required by MutablePriorityQueue
+	int getId() const;
 	double getDist() const;
 	Vertex *getPath() const;
 	double getX() const;
 	double getY() const;
 	double distanceTo(const Vertex* v);
-	friend class Graph<T>;
-	friend class MutablePriorityQueue<Vertex<T>>;
+	friend class Graph;
+	friend class MutablePriorityQueue<Vertex>;
 };
 
-
-template <class T>
-Vertex<T>::Vertex(T in, const double x, const double y): info(in),X(x),Y(y) {}
+Vertex::Vertex(int id, const double x, const double y): id(id),X(x),Y(y) {}
 
 /*
  * Auxiliary function to add an outgoing edge to a vertex (this),
  * with a given destination vertex (d) and edge weight (w).
  */
-template <class T>
-void Vertex<T>::addEdge(int id, Vertex<T> *d, double w) {
-	adj.push_back(Edge<T>(id, d, w));
+void Vertex::addEdge(int id, Vertex *d, double w) {
+	adj.push_back(Edge(id, d, w));
 }
 
-template <class T>
-bool Vertex<T>::operator<(Vertex<T> & vertex) const {
+bool Vertex::operator<(Vertex & vertex) const {
 	return this->dist < vertex.dist;
 }
 
-template <class T>
-T Vertex<T>::getInfo() const {
-	return this->info;
+int Vertex::getId() const {
+	return this->id;
 }
 
-template <class T>
-double Vertex<T>::getDist() const {
+double Vertex::getDist() const {
 	return this->dist;
 }
 
-template <class T>
-Vertex<T> *Vertex<T>::getPath() const {
+Vertex *Vertex::getPath() const {
 	return this->path;
 }
 
-template <class T>
-double Vertex<T>::getX() const{
+double Vertex::getX() const{
 	return this->X;
 }
 
-template <class T>
-double Vertex<T>::getY() const{
+double Vertex::getY() const{
 	return this->Y;
 }
 
-template <class T>
-double Vertex<T>::distanceTo(const Vertex* v){
+double Vertex::distanceTo(const Vertex* v){
 	return sqrt( (v->getX()*v->getX()) + (v->getY()*v->getY()));
 }
 
-/********************** Edge  ****************************/
+/*************************** Vertex Hash  **************************/
 
-template <class T>
-class Edge {
-	int id;
-	Vertex<T> * dest;      // destination vertex
-	double weight;         // edge weight
+class VertexEqual {
 public:
-	Edge(int id, Vertex<T> *d, double w);
-	friend class Graph<T>;
-	friend class Vertex<T>;
+	bool operator()(const Vertex* v1, const Vertex* v2) const {
+		return v1->getId() == v2->getId();
+	}
 };
 
-template <class T>
-Edge<T>::Edge(int id, Vertex<T> *d, double w): id(id), dest(d), weight(w) {}
-
-
+class HashById {
+public:
+	size_t operator()(Vertex* const& v) const {
+		int id = v->getId();
+		return std::hash<int>()(id);
+	}
+};
 
 /*************************** Graph  **************************/
 
-template <class T>
 class Graph {
-	vector<Vertex<T> *> vertexSet;    // vertex set
+	std::unordered_set<Vertex *, HashById, VertexEqual> vertexSet;    // vertex set
 
 public:
-	Vertex<T> *findVertex(const T &in) const;
-	bool addVertex(const T &in, const double x, const double y);
-	bool addEdge(int id, const T &sourc, const T &dest);
+	Vertex *findVertex(const int &in) const;
+	bool addVertex(const int &in, const double x, const double y);
+	bool removeVertex(const int &in);
+	bool addEdge(int id, const int &sourc, const int &dest);
 	int getNumVertex() const;
-	vector<Vertex<T> *> getVertexSet() const;
+	std::unordered_set<Vertex *, HashById, VertexEqual> getVertexSet() const;
 
 	// Fp05 - single source
-	void dijkstraShortestPath(const T &s);
-	void dijkstraShortestPathOld(const T &s);
-	void unweightedShortestPath(const T &s);
-	void bellmanFordShortestPath(const T &s);
+	//void dijkstraShortestPath(const int &s);
+	//void dijkstraShortestPathOld(const int &s);
+	void unweightedShortestPath(const int &s);
+	void bellmanFordShortestPath(const int &s);
 	void getGraphInfo();
-	vector<T> getPath(const T &origin, const T &dest) const;
+	std::vector<int> getPath(const int &origin, const int &dest) const;
 
 	// Fp05 - all pairs
 	void floydWarshallShortestPath();
-	vector<T> getfloydWarshallPath(const T &origin, const T &dest) const;
-
+	std::vector<int> getfloydWarshallPath(const int &origin, const int &dest) const;
 };
 
-template <class T>
-int Graph<T>::getNumVertex() const {
+int Graph::getNumVertex() const {
 	return vertexSet.size();
 }
 
-template <class T>
-vector<Vertex<T> *> Graph<T>::getVertexSet() const {
+std::unordered_set<Vertex *, HashById, VertexEqual> Graph::getVertexSet() const {
 	return vertexSet;
 }
 
 /*
  * Auxiliary function to find a vertex with a given content.
  */
-template <class T>
-Vertex<T> * Graph<T>::findVertex(const T &in) const {
-	for (auto v : vertexSet)
-		if (v->info == in)
-			return v;
+Vertex * Graph::findVertex(const int &in) const {
+	auto found = vertexSet.find(new Vertex(in, 0, 0));
+	if(found != vertexSet.end()){
+		return *found;
+	}
+
 	return NULL;
 }
 
@@ -168,21 +168,28 @@ Vertex<T> * Graph<T>::findVertex(const T &in) const {
  *  Adds a vertex with a given content or info (in) to a graph (this).
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
-template <class T>
-bool Graph<T>::addVertex(const T &in, const double x, const double y) {
+bool Graph::addVertex(const int &in, const double x, const double y) {
 	if ( findVertex(in) != NULL)
 		return false;
-	vertexSet.push_back(new Vertex<T>(in, x, y));
+	vertexSet.insert(new Vertex(in, x, y));
 	return true;
 }
 
+
+bool Graph::removeVertex(const int &in){
+	auto found = vertexSet.find(new Vertex(in, 0, 0));
+	if(found != vertexSet.end()){
+		vertexSet.erase(found);
+		return true;
+	}
+	return false;
+}
 /*
  * Adds an edge to a graph (this), given the contents of the source and
  * destination vertices and the edge weight (w).
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
-template <class T>
-bool Graph<T>::addEdge(int id, const T &sourc, const T &dest) {
+bool Graph::addEdge(int id, const int &sourc, const int &dest) {
 	auto v1 = findVertex(sourc);
 	auto v2 = findVertex(dest);
 	if (v1 == NULL || v2 == NULL)
@@ -194,11 +201,10 @@ bool Graph<T>::addEdge(int id, const T &sourc, const T &dest) {
 
 
 /**************** Single Source Shortest Path algorithms ************/
-
-template<class T>
-void Graph<T>::dijkstraShortestPath(const T &origin) {
+/*
+void Graph::dijkstraShortestPath(const int &origin) {
 	auto s = initSingleSource(origin);
-	MutablePriorityQueue<Vertex<T>> q;
+	MutablePriorityQueue<Vertex> q;
 	q.insert(s);
 	while ( ! q.empty() ) {
 		auto v = q.extractMin();
@@ -213,12 +219,11 @@ void Graph<T>::dijkstraShortestPath(const T &origin) {
 		}
 	}
 }
-
+*/
 /**************** Extracting graph info ************/
 
-template<class T>
-void Graph<T>::getGraphInfo(){
-	ifstream inFile;
+void Graph::getGraphInfo(){
+	std::ifstream inFile;
 
 	inFile.open("T03_nodes_X_Y_Fafe.txt");
 
