@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "Graph.hpp"
 using namespace std;
 
 /******************GRAPH*********************/
@@ -201,7 +201,7 @@ void Graph::unvisit(){
 Edge::Edge(int id, Vertex *d, double w) : id(id), dest(d), weight(w) {}
 
 /******************VERTEX*********************/
-Vertex::Vertex(int in, const double x, const double y) : info(in), X(x), Y(y) {}
+Vertex::Vertex(int in, const double x, const double y) : id(in), X(x), Y(y) {}
 
 /*
  * Auxiliary function to add an outgoing edge to a vertex (this),
@@ -216,7 +216,7 @@ bool Vertex::operator<(Vertex &vertex) const {
     return this->dist < vertex.dist;
 }
 
-int Vertex::getInfo() const { return this->info; }
+int Vertex::getId() const { return this->id; }
 
 double Vertex::getDist() const { return this->dist; }
 
@@ -227,5 +227,5 @@ double Vertex::getX() const { return this->X; }
 double Vertex::getY() const { return this->Y; }
 
 double Vertex::distanceTo(const Vertex *v) {
-    return sqrt((v->getX() * v->getX()) + (v->getY() * v->getY()));
+    return sqrt((this->X - v->X) * (this->X - v->X) + (this->Y- v->Y) * (this->Y - v->Y));
 }

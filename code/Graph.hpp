@@ -75,10 +75,12 @@ public:
 	}
 };
 
+typedef std::unordered_set<Vertex *, HashById, VertexEqual> VertexSet;
+
 /*************************** Graph  **************************/
 
 class Graph {
-	std::unordered_set<Vertex *, HashById, VertexEqual> vertexSet;    // vertex set
+	VertexSet vertexSet;    // vertex set
 
 public:
 	Vertex *findVertex(const int &in) const;
@@ -98,7 +100,7 @@ public:
 
     // Fp05 - all pairs
     void floydWarshallShortestPath();
-    vector<int> getfloydWarshallPath(const int &origin, const int &dest) const;
+    std::vector<int> getfloydWarshallPath(const int &origin, const int &dest) const;
 
     /* Strongly Connected Components*/
     Graph getTranspose();
