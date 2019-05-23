@@ -140,19 +140,6 @@ void Graph::getGraphInfo() {
         idAresta++;
     }
 
-		linestream >> dummy_char;
-
-		linestream >> idNoOrigem;
-		std::getline(linestream, data, ','); 
-		linestream >> idNoDestino;
-		//std::cout << idAresta << "\t" << idNoOrigem << "\t" << idNoDestino << endl;
-		this->addEdge(idAresta, idNoOrigem, idNoDestino);
-		idAresta++;
-		this->addEdge(idAresta, idNoDestino, idNoOrigem);
-		idAresta++;
-
-	}
-
 	inFile.close();
 }
 
