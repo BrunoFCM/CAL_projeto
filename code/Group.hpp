@@ -1,5 +1,5 @@
 #include "tourist.hpp"
-#include "Graph.h"
+#include "Graph.hpp"
 
 #include <vector>
 #include <map>

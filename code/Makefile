@@ -1,7 +1,7 @@
 ﻿all: project
 
-project: main.o tourist.o bus.o Group.o
-	g++ -o project main.o tourist.o bus.o Group.o
+project: main.o tourist.o bus.o Group.o Graph.o
+	g++ -o project main.o tourist.o bus.o Group.o Graph.o
 
 main.o: main.cpp
 	g++ -o main.o main.cpp -c -Wall -Werror -Wextra
@@ -15,8 +15,8 @@ bus.o: bus.cpp
 Group.o: Group.cpp
 	g++ -o Group.o Group.cpp -c -Wall -Werror -Wextra
 
-Graph.o: Graph.h
-	g++ -o Graph.o Graph.h -c -Wall -Werror -Wextra
+Graph.o: Graph.cpp
+	g++ -o Graph.o Graph.cpp -c -Wall -Werror -Wextra
 
 clean:
 	rm -rf *.o *~ main

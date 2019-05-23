@@ -1,142 +1,144 @@
-#include "Graph.h"
+#include "Graph.hpp"
 using namespace std;
 
 /******************GRAPH*********************/
-int Graph::getNumVertex() const {
-	return vertexSet.size();
-}
+int Graph::getNumVertex() const { return vertexSet.size(); }
 
-std::unordered_set<Vertex *, HashById, VertexEqual> Graph::getVertexSet() const {
-	return vertexSet;
+unordered_set<Vertex *, HashById, VertexEqual> Graph::getVertexSet() const {
+    return vertexSet;
 }
 
 /*
  * Auxiliary function to find a vertex with a given content.
  */
-Vertex * Graph::findVertex(const int &in) const {
-	auto found = vertexSet.find(new Vertex(in, 0, 0));
-	if(found != vertexSet.end()){
-		return *found;
-	}
+Vertex *Graph::findVertex(const int &in) const {
+    auto found = vertexSet.find(new Vertex(in, 0, 0));
+    if (found != vertexSet.end()) {
+        return *found;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 /*
  *  Adds a vertex with a given content or info (in) to a graph (this).
- *  Returns true if successful, and false if a vertex with that content already exists.
+ *  Returns true if successful, and false if a vertex with that content already
+ * exists.
  */
 bool Graph::addVertex(const int &in, const double x, const double y) {
-	if ( findVertex(in) != NULL)
-		return false;
-	vertexSet.insert(new Vertex(in, x, y));
-	return true;
+    if (findVertex(in) != NULL) return false;
+    vertexSet.insert(new Vertex(in, x, y));
+    return true;
 }
 
-
-bool Graph::removeVertex(const int &in){
-	auto found = vertexSet.find(new Vertex(in, 0, 0));
-	if(found != vertexSet.end()){
-		vertexSet.erase(found);
-		return true;
-	}
-	return false;
+bool Graph::removeVertex(const int &in) {
+    auto found = vertexSet.find(new Vertex(in, 0, 0));
+    if (found != vertexSet.end()) {
+        vertexSet.erase(found);
+        return true;
+    }
+    return false;
 }
 /*
  * Adds an edge to a graph (this), given the contents of the source and
  * destination vertices and the edge weight (w).
- * Returns true if successful, and false if the source or destination vertex does not exist.
+ * Returns true if successful, and false if the source or destination vertex
+ * does not exist.
  */
 bool Graph::addEdge(int id, const int &sourc, const int &dest) {
-	auto v1 = findVertex(sourc);
-	auto v2 = findVertex(dest);
-	if (v1 == NULL || v2 == NULL)
-		return false;
-	double w = v1->distanceTo(v2);
-	v1->addEdge(id, v2,w);
-	return true;
+    auto v1 = findVertex(sourc);
+    auto v2 = findVertex(dest);
+    if (v1 == NULL || v2 == NULL) return false;
+    double w = v1->distanceTo(v2);
+    v1->addEdge(id, v2, w);
+    return true;
 }
-
 
 /**************** Single Source Shortest Path algorithms ************/
 /*
 void Graph::dijkstraShortestPath(const int &origin) {
-	auto s = initSingleSource(origin);
-	MutablePriorityQueue<Vertex> q;
-	q.insert(s);
-	while ( ! q.empty() ) {
-		auto v = q.extractMin();
-		for (auto e : v->adj) {
-			auto oldDist = e.dest->dist;
-			if (relax(v, e.dest, e.weight)) {
-				if (oldDist == INF)
-				q.insert(e.dest);
-				else
-				q.decreaseKey(e.dest);
-			}
-		}
-	}
+        auto s = initSingleSource(origin);
+        MutablePriorityQueue<Vertex> q;
+        q.insert(s);
+        while ( ! q.empty() ) {
+                auto v = q.extractMin();
+                for (auto e : v->adj) {
+                        auto oldDist = e.dest->dist;
+                        if (relax(v, e.dest, e.weight)) {
+                                if (oldDist == INF)
+                                q.insert(e.dest);
+                                else
+                                q.decreaseKey(e.dest);
+                        }
+                }
+        }
 }
 */
 
 /**************** Extracting graph info ************/
 
-void Graph::getGraphInfo(){
-	std::ifstream inFile;
+void Graph::getGraphInfo() {
+    ifstream inFile;
 
-	inFile.open("T03_nodes_X_Y_Fafe.txt");
+    inFile.open("T03_nodes_X_Y_Fafe.txt");
 
-	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
-		exit(1);   // call system to stop
-	}
+    if (!inFile) {
+        cerr << "Unable to open file datafile.txt";
+        exit(1);  // call system to stop
+    }
 
-	std::string line;
+    string line;
 
-	int idNo = 0;
-	double X = 0;
-	double Y = 0;
+    int idNo = 0;
+    double X = 0;
+    double Y = 0;
 
+    getline(inFile, line);
+    while (getline(inFile, line)) {
+        stringstream linestream(line);
+        string data;
+        char dummy_char;
 
-	std::getline(inFile, line);
-	while (std::getline(inFile, line)) {
-		std::stringstream linestream(line);
-		std::string data;
-		char dummy_char;
+        linestream >> dummy_char;
 
-		linestream >> dummy_char;
+        linestream >> idNo;
 
+        getline(linestream, data, ',');
+        linestream >> X;
 
-		linestream >> idNo;
+        getline(linestream, data, ',');
+        linestream >> Y;
+        this->addVertex(idNo, X, Y);
+    }
 
-		std::getline(linestream, data, ',');
-		linestream >> X;
+    inFile.close();
 
-		std::getline(linestream, data, ',');
-		linestream >> Y;
-		//std::cout << idNo << "\t" << X << "\t" << Y << endl;
-		this->addVertex(idNo, X, Y);
-	}
+    inFile.open("T03_edges_Fafe.txt");
 
-	inFile.close();
+    if (!inFile) {
+        cerr << "Unable to open file datafile.txt";
+        exit(1);  // call system to stop
+    }
 
-	inFile.open("T03_edges_Fafe.txt");
+    int idAresta = 0;
+    int idNoOrigem = 0;
+    int idNoDestino = 0;
 
-	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
-		exit(1);   // call system to stop
-	}
+    getline(inFile, line);
+    while (getline(inFile, line)) {
+        stringstream linestream(line);
+        string data;
 
-	int idAresta = 0;
-	int idNoOrigem = 0;
-	int idNoDestino = 0;
+        char dummy_char;
 
-	std::getline(inFile, line);
-	while (std::getline(inFile, line)) {
-		std::stringstream linestream(line);
-		std::string data;
+        linestream >> dummy_char;
 
-		char dummy_char;
+        linestream >> idNoOrigem;
+        getline(linestream, data, ',');
+        linestream >> idNoDestino;
+        this->addEdge(idAresta, idNoOrigem, idNoDestino);
+        idAresta++;
+    }
 
 		linestream >> dummy_char;
 
@@ -181,24 +183,55 @@ Graph Graph::getTranspose() {
     return g;
 }
 
-void Graph::eraseNotConnected(const int &start){
-    this->unvisit();
+void Graph::DFS(const int &s, stack<int> *stack) {
+    Vertex *v = this->findVertex(s);
+    v->visited = true;
 
-    /*Depth-First Search using G and push to stack*/
+    for (Edge e : v->adj) {
+        if (e.dest->visited == false) this->DFS(e.dest->id, stack);
+    }
 
-    Graph gr = getTranspose();
-
-    this->unvisit();
-    /*pop from stack and Depth-First Search using Gr from poped vertex*/
+    stack->push(s);
 }
 
-void Graph::unvisit(){
-    for(Vertex* v : this->vertexSet){
-        v->visited = false;
+void Graph::getComponents(const int &s, vector<int> *comp) {
+    Vertex *v = this->findVertex(s);
+    v->visited = true;
+    comp->push_back(s);
+
+    for (Edge e : v->adj) {
+        if (e.dest->visited == false) {
+            this->getComponents(e.dest->id, comp);
+        }
     }
 }
 
+void Graph::eraseNotConnected(const int &start) {
+    stack<int> stack;
+    vector<int> comp;
 
+    /* PUSH IN REVERSE ORDER */
+    this->unvisit();
+    this->DFS(start, &stack);
+
+    Graph gr = getTranspose();
+
+    /* POP FIRST TO GET CONNECTED GRAPH */
+    this->unvisit();
+    gr.getComponents(start, &comp);
+
+    /*TEST*/
+    for (int id : comp) {
+        cout << id << ",";
+    }
+    cout << endl;
+}
+
+void Graph::unvisit() {
+    for (Vertex *v : this->vertexSet) {
+        v->visited = false;
+    }
+}
 
 /******************EDGE*********************/
 Edge::Edge(int id, Vertex *d, double w) : id(id), dest(d), weight(w) {}
