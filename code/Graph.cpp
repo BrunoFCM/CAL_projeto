@@ -140,7 +140,7 @@ void Graph::getGraphInfo() {
         idAresta++;
     }
 
-	inFile.close();
+    inFile.close();
 }
 
 Graph Graph::getTranspose() {
@@ -181,21 +181,19 @@ void Graph::DFS(const int &s, stack<int> *stack) {
     stack->push(s);
 }
 
-void Graph::getComponents(const int &s, vector<int> *comp) {
+void Graph::visitComponents(const int &s) {
     Vertex *v = this->findVertex(s);
     v->visited = true;
-    comp->push_back(s);
 
     for (Edge e : v->adj) {
         if (e.dest->visited == false) {
-            this->getComponents(e.dest->id, comp);
+            this->visitComponents(e.dest->id);
         }
     }
 }
 
 void Graph::eraseNotConnected(const int &start) {
     stack<int> stack;
-    vector<int> comp;
 
     /* PUSH IN REVERSE ORDER */
     this->unvisit();
@@ -205,13 +203,32 @@ void Graph::eraseNotConnected(const int &start) {
 
     /* POP FIRST TO GET CONNECTED GRAPH */
     this->unvisit();
-    gr.getComponents(start, &comp);
+    gr.visitComponents(start);
 
-    /*TEST*/
-    for (int id : comp) {
-        cout << id << ",";
+    for (Vertex *v : this->vertexSet) {
+        if (!v->visited) {
+            this->removeVertex(v->id);
+        }
     }
-    cout << endl;
+
+    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end(); it_vertex++) {
+        /* ALL UNVISITED VERTEXES */
+        if (!(*it_vertex)->visited) {
+            for (vertex_set_t::iterator it_vertex_orig = this->vertexSet.begin(); it_vertex_orig != this->vertexSet.end(); it_vertex_orig++) {
+                /* ALL VISITED VERTEXES */
+                if ((*it_vertex_orig)->visited) {
+                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end(); it_edge++) {
+                        if ((*it_edge).dest == (*it_vertex)) {
+                            /*REMOVE UNUSED EDGE*/
+                            (*it_vertex_orig)->adj.erase(it_edge);
+                        }
+                    }
+                }
+            }
+            /* REMOVE VERTEX */
+            this->vertexSet.erase(it_vertex);
+        }
+    }
 }
 
 void Graph::unvisit() {

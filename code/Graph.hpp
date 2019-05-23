@@ -13,7 +13,6 @@
 #include <sstream>
 #include <stack>
 #include <unordered_set>
-#include <vector>
 
 class Edge;
 class Graph;
@@ -48,7 +47,7 @@ class Vertex {
 
    public:
     Vertex(int id, const double X, const double Y);
-    bool operator<(Vertex &vertex) const;  // // required by MutablePriorityQueue
+    bool operator<(Vertex &vertex) const;
     int getId() const;
     double getDist() const;
     Vertex *getPath() const;
@@ -76,10 +75,9 @@ class HashById {
 };
 
 /*************************** Graph  **************************/
-
+typedef std::unordered_set<Vertex *, HashById, VertexEqual> vertex_set_t;
 class Graph {
-    std::unordered_set<Vertex *, HashById, VertexEqual>
-        vertexSet;  // vertex set
+    vertex_set_t vertexSet;  // vertex set
 
    public:
     Graph() = default;
@@ -107,7 +105,7 @@ class Graph {
     void eraseNotConnected(const int &start);
     void unvisit();
     void DFS(const int &s, std::stack<int> *stack);
-    void getComponents(const int &s, std::vector<int> *comp);
+    void visitComponents(const int &s);
 };
 
 #endif /* GRAPH_H_ */
