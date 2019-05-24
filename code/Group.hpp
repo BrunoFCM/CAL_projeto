@@ -1,5 +1,6 @@
 #include "tourist.hpp"
 #include "Graph.hpp"
+#include "bus.hpp"
 
 #include <vector>
 #include <map>
@@ -13,14 +14,54 @@ class Group {
     std::vector<Tourist *> tourists;
 
     std::map<int, double> compatibilities;
+    pair<int,double> bestPair;
+
+    double addedDistance;
 
 public:
+    Group();
+    Group(int id);
     Group(Tourist * tourist);
     static void resetId();
-    int getId();
-    void addTourist(Tourist * tourist);
-    void removeTourist(Tourist * tourist);
-    Group merge(Group group);
-    double getCompatibility(const Group &group) const;
-    double getCompatibility(const Group &group, const Graph &graph) const;
+    int getId() const;
+    void setAddedDistance(const Graph &graph);
+    double getAddedDistance() const;
+    Group merge(const Group &group) const;
+    double getCompatibility(const Group * group) const;
+    double getCompatibility(Group * group, const Graph &graph) ;
+    pair<int,double> getBestPair() const;
+    void setContentsTo(Bus &bus);
+};
+
+class GroupEqual {
+public:
+	bool operator()(const Group * g1, const Group * g2) const {
+		return g1->getId() == g2->getId();
+	}
+};
+
+class HashByGroupId {
+public:
+	size_t operator()(Group* const& g) const {
+		int id = g->getId();
+		return std::hash<int>()(id);
+	}
+};
+
+class GroupSet {
+public:
+    std::unordered_set<Group *, HashByGroupId, GroupEqual> groups;
+    std::unordered_set<Group *, HashByGroupId, GroupEqual>::iterator find(Group * group) {return groups.find(group);}; 
+    std::unordered_set<Group *, HashByGroupId, GroupEqual>::iterator find(int id);
+    std::unordered_set<Group *, HashByGroupId, GroupEqual>::const_iterator begin() const {return groups.begin();}
+    std::unordered_set<Group *, HashByGroupId, GroupEqual>::const_iterator end() const {return groups.end();}
+    void insert(Group * group) {groups.insert(group);}
+    void erase(std::unordered_set<Group *, HashByGroupId, GroupEqual>::iterator it) {groups.erase(it);}
+    size_t size() const {return groups.size();}
+
+    ~GroupSet(){
+        for(Group * group : groups){
+            delete(group);
+        }
+    }
 };
