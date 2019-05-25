@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <unordered_set>
+#include <queue>
 
 #include "Group.hpp"
 #include "Graph.hpp"
 #include "bus.hpp"
+#include "TouristOrganizer.hpp"
 
 GroupSet getGroupSet(vector<Tourist *> tourists){
     GroupSet result;
@@ -45,6 +47,8 @@ pair<int,int> getBestCombination(const GroupSet &groups){
     return result;
 }
 
+
+
 void infiniteCapacityOrganise(vector<Bus> &buses, GroupSet &groups){
     if(groups.size() == 1){
         Group group = **(groups.begin());
@@ -83,7 +87,76 @@ void infiniteCapacityOrganise(vector<Bus> &buses, GroupSet &groups){
     }
 }
 
-bool finiteCapacityOrganise(vector<Bus> &buses, GroupSet &groups){
-    //TODO
-    return false;
+CombinationQueue getCombinationOrder(const GroupSet &groups){
+    CombinationQueue queue;
+
+    for(auto i = groups.begin(); i != groups.end(); ++i){        
+        auto j = i;
+        ++j;
+
+        for(; j != groups.end(); ++j){
+            double value = (*i)->getCompatibility(*j);
+            int first = (*i)->getId();
+            int second = (*j)->getId();
+
+            combination_t combination = {first, second, value};
+            queue.push(combination);
+        }
+    }
+
+    return queue;
 }
+
+//This function assumes that |tourists| <= sum(busCapacity)
+bool finiteCapacityOrganise(vector<Bus> &buses, GroupSet &groups){
+    if(groups.size() == 1){
+        Group group = **(groups.begin());
+        group.setContentsTo(buses[0]);
+
+        return true;
+    }
+
+    CombinationQueue combinations = getCombinationOrder(groups);
+    while(combinations.size() != 0)
+    {
+        combination_t combine = combinations.top();
+        combinations.pop();
+
+        auto group1 = groups.find(combine.first);
+        auto group2 = groups.find(combine.second);
+
+        Group * newGroup = new Group((*group1)->merge(**group2));
+
+        if(buses.size() >= groups.size()){
+            double baseDistance = ((*group1)->getAddedDistance() < (*group2)->getAddedDistance()) ? 
+                                    (*group2)->getAddedDistance() : (*group1)->getAddedDistance();
+
+            if(baseDistance * 2 < newGroup->getAddedDistance()){
+                int busIndex = 0;
+                for(auto i = groups.begin(); i != groups.end(); ++i){
+                    (*i)->setContentsTo(buses[busIndex]);
+                    ++busIndex;
+                }
+
+                return true;
+            }
+        }
+        Group * g1 = *group1;
+        Group * g2 = *group2;
+        groups.erase(group1);
+        groups.erase(group2);
+        groups.insert(newGroup);
+
+        if(finiteCapacityOrganise(buses, groups)){
+            return true;
+        }
+        else{
+            //reseting set state
+            groups.erase(groups.find(newGroup));
+            delete(newGroup);
+            groups.insert(g1);
+            groups.insert(g2);
+        }
+    }
+}
+

@@ -87,7 +87,9 @@ Group Group::merge(const Group &group) const {
     }
 
     auto mergeCompatibility = result.compatibilities.find(group_id);
-    result.addedDistance = mergeCompatibility->second + group.addedDistance;
+    double newDistance = group_id < group.group_id ? group.group_id : group_id;
+
+    result.addedDistance = mergeCompatibility->second + newDistance;
 
     for (auto i = POI.begin(); i != POI.end(); ++i){
         result.POI.insert(*i);
