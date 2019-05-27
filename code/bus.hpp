@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tourist.hpp"
 using namespace std;
 
