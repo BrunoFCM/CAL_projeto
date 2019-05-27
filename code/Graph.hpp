@@ -13,6 +13,8 @@
 #include <sstream>
 #include <stack>
 #include <unordered_set>
+#include "graphviewer.h"
+#include "MutablePriorityQueue.h"
 
 class Edge;
 class Graph;
@@ -41,6 +43,7 @@ class Vertex {
     const double X, Y;
     double dist = 0;
     Vertex *path = NULL;
+    int queueIndex;
 
     bool processing = false;
     void addEdge(int id, Vertex *dest, double w);
@@ -50,9 +53,10 @@ class Vertex {
     bool operator<(Vertex &vertex) const;
     int getId() const;
     double getDist() const;
-    Vertex *getPath() const;
     double getX() const;
     double getY() const;
+    double getQueueIndex() const;
+    double setQueueIndex(int queueIndex);
     double distanceTo(const Vertex *v);
     friend class Graph;
 };
@@ -88,12 +92,15 @@ class Graph {
     int getNumVertex() const;
     std::unordered_set<Vertex *, HashById, VertexEqual> getVertexSet() const;
 
+    Vertex *initSingleSource(const int &origin);
+    bool relax(Vertex *v, Vertex *w, double weight);
     // Fp05 - single source
-    // void dijkstraShortestPath(const int &s);
+    void dijkstraShortestPath(const int &origin);
     // void dijkstraShortestPathOld(const int &s);
     void unweightedShortestPath(const int &s);
     void bellmanFordShortestPath(const int &s);
     void getGraphInfo();
+    void displayPath(GraphViewer *gv, std::vector<int> path);
     std::vector<int> getPath(const int &origin, const int &dest) const;
 
     // Fp05 - all pairs

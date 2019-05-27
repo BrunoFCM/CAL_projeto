@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Graph.hpp"
 using namespace std;
 
@@ -55,7 +56,32 @@ bool Graph::addEdge(int id, const int &sourc, const int &dest) {
 }
 
 /**************** Single Source Shortest Path algorithms ************/
-/*
+
+/**
+* Initializes single-source shortest path data (path, dist).
+* Receives the content of the source vertex and returns a pointer to the source vertex.
+* Used by all single-source shortest path algorithms.
+*/
+Vertex * Graph::initSingleSource(const int &origin) {
+    for (auto v : vertexSet) {
+        v->dist = INF;
+        v->path = nullptr;
+    }
+    auto s = findVertex(origin);
+    s->dist = 0;
+    return s;
+}
+
+bool Graph::relax(Vertex *v, Vertex *w, double weight) {
+    if (v->dist + weight < w->dist) {
+        w->dist = v->dist + weight;
+        w->path = v;
+        return true;
+    }
+    else
+        return false;
+}
+
 void Graph::dijkstraShortestPath(const int &origin) {
         auto s = initSingleSource(origin);
         MutablePriorityQueue<Vertex> q;
@@ -73,7 +99,18 @@ void Graph::dijkstraShortestPath(const int &origin) {
                 }
         }
 }
-*/
+
+vector<int> Graph::getPath(const int &origin, const int &dest) const {
+    vector<int> res;
+    auto v = findVertex(dest);
+    if (v == nullptr || v->dist == INF) // missing or disconnected
+        return res;
+    for ( ; v != nullptr; v = v->path)
+        res.push_back(v->id);
+    reverse(res.begin(), res.end());
+    return res;
+}
+
 
 /**************** Extracting graph info ************/
 
@@ -141,6 +178,20 @@ void Graph::getGraphInfo() {
     }
 
     inFile.close();
+}
+
+void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
+
+	for(unsigned int i = 0; i < path.size(); i++){
+		Vertex *v = findVertex(path[i]);
+		cout << path[i] << endl;
+
+		gv->addNode(path[i], v->getX(), v->getY());
+		if(i != path.size() - 1){
+			gv->addEdge(i, path[i], path[i+1], EdgeType::DIRECTED);
+		}
+	}
+	
 }
 
 Graph Graph::getTranspose() {
@@ -260,11 +311,15 @@ int Vertex::getId() const { return this->id; }
 
 double Vertex::getDist() const { return this->dist; }
 
-Vertex *Vertex::getPath() const { return this->path; }
+
 
 double Vertex::getX() const { return this->X; }
 
 double Vertex::getY() const { return this->Y; }
+
+double Vertex::getQueueIndex() const { return this->queueIndex;}
+
+double Vertex::setQueueIndex(int queueIndex) { this->queueIndex = queueIndex;}
 
 double Vertex::distanceTo(const Vertex *v) {
     return sqrt((v->getX() * v->getX()) + (v->getY() * v->getY()));
