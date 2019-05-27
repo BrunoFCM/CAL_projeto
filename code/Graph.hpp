@@ -11,7 +11,9 @@
 #include <list>
 #include <queue>
 #include <sstream>
+#include <algorithm>
 #include <stack>
+#include <string>
 #include <unordered_set>
 #include "graphviewer.h"
 #include "MutablePriorityQueue.h"
@@ -53,10 +55,11 @@ class Vertex {
     bool operator<(Vertex &vertex) const;
     int getId() const;
     double getDist() const;
+    Vertex *getPath() const;
     double getX() const;
     double getY() const;
     double getQueueIndex() const;
-    double setQueueIndex(int queueIndex);
+    void setQueueIndex(int queueIndex);
     double distanceTo(const Vertex *v);
     friend class Graph;
 };
@@ -94,14 +97,12 @@ class Graph {
 
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
-    // Fp05 - single source
     void dijkstraShortestPath(const int &origin);
-    // void dijkstraShortestPathOld(const int &s);
     void unweightedShortestPath(const int &s);
     void bellmanFordShortestPath(const int &s);
-    void getGraphInfo();
     void displayPath(GraphViewer *gv, std::vector<int> path);
-    std::vector<int> getPath(const int &origin, const int &dest) const;
+    void getGraphInfo(std::string nodes, std::string edges);
+    std::vector<int> getPath(const int &dest) const;
 
     // Fp05 - all pairs
     void floydWarshallShortestPath();

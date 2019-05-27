@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "Graph.hpp"
 using namespace std;
 
@@ -82,6 +81,7 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
         return false;
 }
 
+
 void Graph::dijkstraShortestPath(const int &origin) {
         auto s = initSingleSource(origin);
         MutablePriorityQueue<Vertex> q;
@@ -100,7 +100,7 @@ void Graph::dijkstraShortestPath(const int &origin) {
         }
 }
 
-vector<int> Graph::getPath(const int &origin, const int &dest) const {
+vector<int> Graph::getPath(const int &dest) const {
     vector<int> res;
     auto v = findVertex(dest);
     if (v == nullptr || v->dist == INF) // missing or disconnected
@@ -114,13 +114,13 @@ vector<int> Graph::getPath(const int &origin, const int &dest) const {
 
 /**************** Extracting graph info ************/
 
-void Graph::getGraphInfo() {
+void Graph::getGraphInfo(string nodes, string edges) {
     ifstream inFile;
 
-    inFile.open("T03_nodes_X_Y_Fafe.txt");
+    inFile.open(nodes.c_str());
 
     if (!inFile) {
-        cerr << "Unable to open file datafile.txt";
+        cerr << "Unable to open nodes file: " << nodes.c_str();
         exit(1);  // call system to stop
     }
 
@@ -150,10 +150,10 @@ void Graph::getGraphInfo() {
 
     inFile.close();
 
-    inFile.open("T03_edges_Fafe.txt");
+    inFile.open(edges.c_str());
 
     if (!inFile) {
-        cerr << "Unable to open file datafile.txt";
+        cerr << "Unable to open edges file: " << edges.c_str();
         exit(1);  // call system to stop
     }
 
@@ -193,6 +193,7 @@ void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
 	}
 	
 }
+
 
 Graph Graph::getTranspose() {
     Graph g = *this;
@@ -256,28 +257,26 @@ void Graph::eraseNotConnected(const int &start) {
     this->unvisit();
     gr.visitComponents(start);
 
-    for (Vertex *v : this->vertexSet) {
-        if (!v->visited) {
-            this->removeVertex(v->id);
-        }
-    }
-
-    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end(); it_vertex++) {
+    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end();) {
         /* ALL UNVISITED VERTEXES */
         if (!(*it_vertex)->visited) {
             for (vertex_set_t::iterator it_vertex_orig = this->vertexSet.begin(); it_vertex_orig != this->vertexSet.end(); it_vertex_orig++) {
                 /* ALL VISITED VERTEXES */
                 if ((*it_vertex_orig)->visited) {
-                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end(); it_edge++) {
+                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end();) {
                         if ((*it_edge).dest == (*it_vertex)) {
                             /*REMOVE UNUSED EDGE*/
-                            (*it_vertex_orig)->adj.erase(it_edge);
+                            it_edge = (*it_vertex_orig)->adj.erase(it_edge);
+                        }else{
+                            ++it_edge;
                         }
                     }
                 }
             }
             /* REMOVE VERTEX */
-            this->vertexSet.erase(it_vertex);
+            it_vertex = this->vertexSet.erase(it_vertex);
+        }else{
+            ++it_vertex;
         }
     }
 }
@@ -311,7 +310,7 @@ int Vertex::getId() const { return this->id; }
 
 double Vertex::getDist() const { return this->dist; }
 
-
+Vertex *Vertex::getPath() const { return this->path; }
 
 double Vertex::getX() const { return this->X; }
 
@@ -319,7 +318,7 @@ double Vertex::getY() const { return this->Y; }
 
 double Vertex::getQueueIndex() const { return this->queueIndex;}
 
-double Vertex::setQueueIndex(int queueIndex) { this->queueIndex = queueIndex;}
+void Vertex::setQueueIndex(int queueIndex) { this->queueIndex = queueIndex;}
 
 double Vertex::distanceTo(const Vertex *v) {
     return sqrt((v->getX() * v->getX()) + (v->getY() * v->getY()));
