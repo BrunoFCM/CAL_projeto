@@ -2,10 +2,9 @@
 using namespace std;
 
 int main() {
-    cout << "START\n";
     vector<Tourist*> tourists;
     vector<Bus*> buses;
-    if (!loadTurists(tourists, buses)) exit(1);
+    loadTourists(tourists, buses);
 
     Graph g;
     g.addVertex(0, 0, 0);
@@ -21,8 +20,8 @@ int main() {
     g.addEdge(4, 0, 4);
 
     g.eraseNotConnected(0);
-    cout << "\n\nINTERFACE\n\n";
-    interface(tourists, buses);
-
+    while (true) {
+        interface(tourists, buses);
+    }
     exit(0);
 }

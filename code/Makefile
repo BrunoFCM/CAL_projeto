@@ -1,6 +1,6 @@
 ﻿all: project
 
-project: clean tourist.o bus.o Group.o Graph.o interface.o main.o
+project: tourist.o bus.o Group.o Graph.o interface.o main.o
 	g++ -o project main.o tourist.o bus.o Group.o Graph.o interface.o
 
 main.o: main.cpp

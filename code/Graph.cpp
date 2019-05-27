@@ -205,28 +205,26 @@ void Graph::eraseNotConnected(const int &start) {
     this->unvisit();
     gr.visitComponents(start);
 
-    for (Vertex *v : this->vertexSet) {
-        if (!v->visited) {
-            this->removeVertex(v->id);
-        }
-    }
-
-    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end(); it_vertex++) {
+    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end();) {
         /* ALL UNVISITED VERTEXES */
         if (!(*it_vertex)->visited) {
             for (vertex_set_t::iterator it_vertex_orig = this->vertexSet.begin(); it_vertex_orig != this->vertexSet.end(); it_vertex_orig++) {
                 /* ALL VISITED VERTEXES */
                 if ((*it_vertex_orig)->visited) {
-                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end(); it_edge++) {
+                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end();) {
                         if ((*it_edge).dest == (*it_vertex)) {
                             /*REMOVE UNUSED EDGE*/
-                            (*it_vertex_orig)->adj.erase(it_edge);
+                            it_edge = (*it_vertex_orig)->adj.erase(it_edge);
+                        }else{
+                            ++it_edge;
                         }
                     }
                 }
             }
             /* REMOVE VERTEX */
-            this->vertexSet.erase(it_vertex);
+            it_vertex = this->vertexSet.erase(it_vertex);
+        }else{
+            ++it_vertex;
         }
     }
 }
