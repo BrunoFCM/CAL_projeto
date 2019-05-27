@@ -121,6 +121,8 @@ void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses) {
 
     // CRIAR GRUPOS
     // DISTRIBUIR PELOS AUTOCARROS
+
+    // interface: escolher o autocarro
     // CRIAR O CAMINHO
 }
 
@@ -128,6 +130,11 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
     cout << "> ";
     
+    // CRIAR GRUPOS
+    // DISTRIBUIR PELOS AUTOCARROS
+
+    // interface: escolher o autocarro
+    // MOSTRAR TURISTAS
 }
 
 void interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
