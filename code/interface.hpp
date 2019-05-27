@@ -19,6 +19,4 @@ void check_tourist(vector<Tourist*> &tourists);
 void check_bus(vector<Bus*> &buses);
 void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses);
 void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses);
-
-
-void interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map);
+void app_interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map);

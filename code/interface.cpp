@@ -137,7 +137,7 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     // MOSTRAR TURISTAS
 }
 
-void interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
+void app_interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
     int op;
     cout << "====================\n";
     cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";

@@ -9,7 +9,7 @@ int main() {
     loadTourists(tourists, buses);
     loadMap(map);
 
-    interface(tourists, buses, map);
+    app_interface(tourists, buses, map);
     
     /*
     GraphViewer *gv = new GraphViewer(1000, 1000, true);
