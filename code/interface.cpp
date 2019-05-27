@@ -139,7 +139,7 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     // CRIAR GRUPOS
     // DISTRIBUIR PELOS AUTOCARROS
 
-    int op;
+    unsigned int op;
     cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
     cin >> op;
     if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}

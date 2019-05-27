@@ -4,3 +4,4 @@ code/project
 code/*.o
 code/project.exe
 \.vscode/
+/Debug/

@@ -4,6 +4,8 @@
 
 #include <map>
 
+int Group::incremented_id = 0;
+
 Group::Group(){
     group_id = ++incremented_id;
 }
