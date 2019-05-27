@@ -2,6 +2,8 @@
 code/.vscode
 .project
 .vscode/*
+.vscode/*/*.ipch
 code/project
 code/*.o
 code/project.exe
+\.vscode/

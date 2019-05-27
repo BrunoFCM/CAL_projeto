@@ -126,9 +126,8 @@ void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
     cin >> op;
     if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
-    else if(op >= 0 && op < buses.size()){
+    else if(op >= 0 && (unsigned)op < buses.size()){
         Bus* b = buses.at(op);
-        int i = 0;
         cout << "BUS " << b->getId() << "\n";
     }else return;
 }
