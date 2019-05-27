@@ -122,8 +122,15 @@ void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     // CRIAR GRUPOS
     // DISTRIBUIR PELOS AUTOCARROS
 
-    // interface: escolher o autocarro
-    // CRIAR O CAMINHO
+    int op;
+    cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
+    cin >> op;
+    if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
+    else if(op >= 0 && op < buses.size()){
+        Bus* b = buses.at(op);
+        int i = 0;
+        cout << "BUS " << b->getId() << "\n";
+    }else return;
 }
 
 void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
@@ -133,25 +140,37 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     // CRIAR GRUPOS
     // DISTRIBUIR PELOS AUTOCARROS
 
-    // interface: escolher o autocarro
-    // MOSTRAR TURISTAS
+    int op;
+    cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
+    cin >> op;
+    if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
+    else if(op >= 0 && op < buses.size()){
+        Bus* b = buses.at(op);
+        int i = 0;
+        cout << "BUS " << b->getId() << "\tMAX CAPACITY " << b->getCap() << "\n";
+        for(Tourist* t : b->getPassengers()){
+            cout << i++ << "\t" << setw(4) << t->getId() << "\t" << t->getName();
+        }
+    }else return;
 }
 
 void interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
-    int op;
-    cout << "====================\n";
-    cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";
-    cout << "> ";
-    cin >> op;
-    cout << "====================\n";
-    switch (op) {
-        case 1: add_tourist(tourists);          break;
-        case 2: add_bus(buses);                 break;
-        case 3: check_tourist(tourists);        break;
-        case 4: check_bus(buses);               break;
-        case 5: get_path(tourists, buses);      break;
-        case 6: get_groups(tourists, buses);    break;
-        case 0: exit(0);
-        default: cin.clear(); cin.ignore(1000000, '\n'); cout << "\n[ERROR: not an option]\n"; break;
+    while(true){
+        int op;
+        cout << "====================\n";
+        cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";
+        cout << "> ";
+        cin >> op;
+        cout << "====================\n";
+        switch (op) {
+            case 1: add_tourist(tourists);          break;
+            case 2: add_bus(buses);                 break;
+            case 3: check_tourist(tourists);        break;
+            case 4: check_bus(buses);               break;
+            case 5: get_path(tourists, buses);      break;
+            case 6: get_groups(tourists, buses);    break;
+            case 0: exit(0);
+            default: cin.clear(); cin.ignore(1000000, '\n'); cout << "\n[ERROR: not an option]\n"; break;
+        }
     }
 }

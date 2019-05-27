@@ -7,8 +7,8 @@
 #include "bus.hpp"
 using namespace std;
 #define INPUT_FILE  "input.txt"
-#define NODES_FILE  "T03_nodes_X_Y_Fafe.txt"
-#define EDGES_FILE  "T03_edges_Fafe.txt"
+#define NODES_FILE  "../T03_nodes_X_Y_Fafe.txt"
+#define EDGES_FILE  "../T03_edges_Fafe.txt"
 
 bool loadTourists(vector<Tourist*> &tourists, vector<Bus*> &buses);
 void loadMap(Graph &map);
