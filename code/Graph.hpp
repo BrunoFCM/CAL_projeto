@@ -12,6 +12,7 @@
 #include <queue>
 #include <sstream>
 #include <stack>
+#include <string>
 #include <unordered_set>
 
 class Edge;
@@ -93,7 +94,7 @@ class Graph {
     // void dijkstraShortestPathOld(const int &s);
     void unweightedShortestPath(const int &s);
     void bellmanFordShortestPath(const int &s);
-    void getGraphInfo();
+    void getGraphInfo(std::string nodes, std::string edges);
     std::vector<int> getPath(const int &origin, const int &dest) const;
 
     // Fp05 - all pairs

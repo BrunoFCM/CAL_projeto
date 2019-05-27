@@ -53,6 +53,10 @@ bool loadTourists(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     return true;
 }
 
+void loadMap(Graph &map){
+    map.getGraphInfo(NODES_FILE, EDGES_FILE);
+}
+
 void add_tourist(vector<Tourist*> &tourists) {
     /* id,name,<list of pois>                     TOURIST  */
     cout << "Write \"id,name,<list of pois>\" \n> ";
@@ -111,18 +115,22 @@ void check_bus(vector<Bus*> &buses) {
     }
 }
 
-void get_path() {
+void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
     cout << "> ";
+
+    // CRIAR GRUPOS
+    // DISTRIBUIR PELOS AUTOCARROS
+    // CRIAR O CAMINHO
 }
 
-void get_groups(){
+void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
     cout << "> ";
     
 }
 
-void interface(vector<Tourist*> &tourists, vector<Bus*> &buses) {
+void interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
     int op;
     cout << "====================\n";
     cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";
@@ -130,12 +138,12 @@ void interface(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     cin >> op;
     cout << "====================\n";
     switch (op) {
-        case 1: add_tourist(tourists);      break;
-        case 2: add_bus(buses);             break;
-        case 3: check_tourist(tourists);    break;
-        case 4: check_bus(buses);           break;
-        case 5: get_path();                 break;
-        case 6: get_groups();               break;
+        case 1: add_tourist(tourists);          break;
+        case 2: add_bus(buses);                 break;
+        case 3: check_tourist(tourists);        break;
+        case 4: check_bus(buses);               break;
+        case 5: get_path(tourists, buses);      break;
+        case 6: get_groups(tourists, buses);    break;
         case 0: exit(0);
         default: cin.clear(); cin.ignore(1000000, '\n'); cout << "\n[ERROR: not an option]\n"; break;
     }

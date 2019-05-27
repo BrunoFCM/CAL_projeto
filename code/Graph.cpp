@@ -77,13 +77,13 @@ void Graph::dijkstraShortestPath(const int &origin) {
 
 /**************** Extracting graph info ************/
 
-void Graph::getGraphInfo() {
+void Graph::getGraphInfo(string nodes, string edges) {
     ifstream inFile;
 
-    inFile.open("T03_nodes_X_Y_Fafe.txt");
+    inFile.open(nodes.c_str());
 
     if (!inFile) {
-        cerr << "Unable to open file datafile.txt";
+        cerr << "Unable to open nodes file: " << nodes.c_str();
         exit(1);  // call system to stop
     }
 
@@ -113,10 +113,10 @@ void Graph::getGraphInfo() {
 
     inFile.close();
 
-    inFile.open("T03_edges_Fafe.txt");
+    inFile.open(edges.c_str());
 
     if (!inFile) {
-        cerr << "Unable to open file datafile.txt";
+        cerr << "Unable to open edges file: " << edges.c_str();
         exit(1);  // call system to stop
     }
 
