@@ -14,4 +14,7 @@ void add_bus(vector<Bus*> &buses);
 void check_tourist(vector<Tourist*> &tourists);
 void check_bus(vector<Bus*> &buses);
 void get_path();
+void get_groups();
+
+
 void interface(vector<Tourist*> &tourists, vector<Bus*> &buses);

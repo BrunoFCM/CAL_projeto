@@ -116,11 +116,16 @@ void get_path() {
     cout << "> ";
 }
 
+void get_groups(){
+    cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
+    cout << "> ";
+    
+}
+
 void interface(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     int op;
     cout << "====================\n";
-    cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. "
-            "Get path\n6. Exit\n";
+    cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";
     cout << "> ";
     cin >> op;
     cout << "====================\n";
@@ -130,7 +135,8 @@ void interface(vector<Tourist*> &tourists, vector<Bus*> &buses) {
         case 3: check_tourist(tourists);    break;
         case 4: check_bus(buses);           break;
         case 5: get_path();                 break;
-        case 6: exit(0);
+        case 6: get_groups();               break;
+        case 0: exit(0);
         default: cin.clear(); cin.ignore(1000000, '\n'); cout << "\n[ERROR: not an option]\n"; break;
     }
 }
