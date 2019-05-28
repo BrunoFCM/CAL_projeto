@@ -28,10 +28,10 @@ void getCompatibilities(GroupSet & groups, const Graph &graph);
 
 pair<int,int> getBestCombination(const GroupSet &groups);
 
-void noOrganizationSet(vector<Bus> &buses, vector<Tourist *> tourists);
+void noOrganizationSet(vector<Bus*> &buses, vector<Tourist *> &tourists);
 
-void infiniteCapacityOrganize(vector<Bus> &buses, GroupSet &groups);
+void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups);
 
 CombinationQueue getCombinationOrder(const GroupSet &groups);
 
-bool finiteCapacityOrganize(vector<Bus> &buses, GroupSet &groups);
+bool finiteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups);

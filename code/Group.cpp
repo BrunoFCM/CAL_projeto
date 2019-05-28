@@ -8,14 +8,19 @@ int Group::incremented_id = 0;
 
 Group::Group(){
     group_id = ++incremented_id;
+    addedDistance = 0;
 }
 
 Group::Group(int id){
     group_id = id;
+
+    addedDistance = 0;
 }
 
 Group::Group(Tourist * tourist){
     group_id = ++incremented_id;
+
+    addedDistance = 0;
 
     if(tourist == NULL){
         return;
@@ -216,9 +221,9 @@ std::unordered_set<Group *, HashByGroupId, GroupEqual>::iterator GroupSet::find(
     return find(dummy);
 }
 
-void Group::setContentsTo(Bus &bus){
+void Group::setContentsTo(Bus *bus){
     for(unsigned int i = 0; i < tourists.size(); ++i)
     {
-        bus.addPassenger(tourists[i]);
+        bus->addPassenger(tourists[i]);
     }
 }

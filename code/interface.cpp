@@ -47,7 +47,7 @@ bool loadTourists(vector<Tourist*> &tourists, vector<Bus*> &buses) {
     }
     if (tourists.empty() || buses.empty()) {
         cout << "N TOURISTS: " << tourists.size()
-             << "\t N BUSES: " << buses.size();
+             << "\t N BUSES: " << buses.size() << endl;
         return false;
     }
     return true;
@@ -55,6 +55,17 @@ bool loadTourists(vector<Tourist*> &tourists, vector<Bus*> &buses) {
 
 void loadMap(Graph &map){
     map.getGraphInfo(NODES_FILE, EDGES_FILE);
+
+    unordered_set<int> max_set;
+    for(Vertex *v : map.getVertexSet()){
+    	unordered_set<int> cur_set = map.getComponents(v->getId());
+    	cout << cur_set.size() << endl;
+    	if(cur_set.size() > max_set.size()){
+    		max_set = cur_set;
+    	}
+    }
+
+    map.eraseNotConnected(max_set);
 }
 
 void add_tourist(vector<Tourist*> &tourists) {
@@ -115,31 +126,62 @@ void check_bus(vector<Bus*> &buses) {
     }
 }
 
-void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses) {
-    cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
-    cout << "> ";
-
-    // CRIAR GRUPOS
-    // DISTRIBUIR PELOS AUTOCARROS
-
+void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
     int op;
-    cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
-    cin >> op;
-    if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
-    else if(op >= 0 && (unsigned)op < buses.size()){
-        Bus* b = buses.at(op);
-        cout << "BUS " << b->getId() << "\n";
-    }else return;
+	cout << "Choose bus [0-" << buses.size() - 1 << "]\n> ";
+	cin >> op;
+	if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
+	else if(op >= 0 && (unsigned)op < buses.size()){
+		Bus* b = buses.at(op);
+		vector<int> poi = b->getPOI();
+
+		GraphViewer *gv = new GraphViewer(1000, 1000, false);
+
+		gv->createWindow(1000, 1000);
+
+		gv->defineEdgeColor("blue");
+		gv->defineVertexColor("yellow");
+
+		vector<int> necessaryPoi = map.getCircularPath(poi);
+
+		//DEBUG
+		cout << "poisize " << necessaryPoi.size() << endl;
+		for(int i : necessaryPoi){
+			cout << i << endl;
+		}
+
+	    map.displayPath(gv, necessaryPoi);
+	}else return;
 }
 
-void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
+void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map){
+	unsigned int op;
     cout << "1. Infinite Bus\n2. Infinite Buses\n3. Realist Buses\n";
     cout << "> ";
-    
-    // CRIAR GRUPOS
-    // DISTRIBUIR PELOS AUTOCARROS
+    cin >> op;
+    if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
+    else{
+    	switch(op){
+    	case 1:{
+    		noOrganizationSet(buses, tourists);
+    		break;
+    	}
+    	case 2:{
+    		GroupSet gSet = getGroupSet(tourists);
+    		getCompatibilities(gSet, map);
+    		infiniteCapacityOrganize(buses, gSet);
+    		break;
+    	}
+    	case 3:{
+    		GroupSet gSet = getGroupSet(tourists);
+    		getCompatibilities(gSet, map);
+    		finiteCapacityOrganize(buses, gSet);
+    		break;
+    	}
+    	}
+    }
 
-    unsigned int op;
+    
     cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
     cin >> op;
     if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
@@ -153,11 +195,16 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses){
     }else return;
 }
 
+void random_tourist(vector<Tourist*> &tourists, Graph &map){
+	tourists.push_back(generateTourist(map));
+	cout << "\nGenerated tourist\n\n";
+}
+
 void app_interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
     while(true){
         int op;
         cout << "====================\n";
-        cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n0. Exit\n";
+        cout << "1. Add tourist\n2. Add bus\n3. Check tourist\n4. Check bus\n5. Get path\n6. Get groups\n7. Generate a random tourist\n0. Exit\n";
         cout << "> ";
         cin >> op;
         cout << "====================\n";
@@ -166,8 +213,9 @@ void app_interface(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) 
             case 2: add_bus(buses);                 break;
             case 3: check_tourist(tourists);        break;
             case 4: check_bus(buses);               break;
-            case 5: get_path(tourists, buses);      break;
-            case 6: get_groups(tourists, buses);    break;
+            case 5: get_path(tourists, buses, map);      break;
+            case 6: get_groups(tourists, buses, map);    break;
+            case 7: random_tourist(tourists, map);		break;
             case 0: exit(0);
             default: cin.clear(); cin.ignore(1000000, '\n'); cout << "\n[ERROR: not an option]\n"; break;
         }

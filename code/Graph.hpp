@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <stack>
 #include <string>
+#include <set>
 #include <unordered_set>
 #include "graphviewer.h"
 #include "MutablePriorityQueue.h"
@@ -88,6 +89,7 @@ class Graph {
 
    public:
     Graph() = default;
+    //Graph(Graph g);
     Vertex *findVertex(const int &in) const;
     bool addVertex(const int &in, const double x, const double y);
     bool removeVertex(const int &in);
@@ -101,6 +103,7 @@ class Graph {
     void unweightedShortestPath(const int &s);
     void bellmanFordShortestPath(const int &s);
     void displayPath(GraphViewer *gv, std::vector<int> path);
+    void displayGraph(GraphViewer *gv);
     void getGraphInfo(std::string nodes, std::string edges);
     std::vector<int> getPath(const int &dest) const;
 
@@ -109,11 +112,14 @@ class Graph {
     std::vector<int> getfloydWarshallPath(const int &origin, const int &dest) const;
 
     /* Strongly Connected Components*/
-    Graph getTranspose();
-    void eraseNotConnected(const int &start);
+    //Graph getTranspose();
+    unordered_set<int> getComponents(const int &start);
+    void eraseNotConnected(unordered_set<int> max_set);
     void unvisit();
     void DFS(const int &s, std::stack<int> *stack);
-    void visitComponents(const int &s);
+    void visitComponents(const int &s, unordered_set<int> *comp);
+
+    vector<int> getCircularPath(vector<int> &poi);
 };
 
 #endif /* GRAPH_H_ */

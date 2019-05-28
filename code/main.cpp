@@ -8,24 +8,18 @@ int main() {
 
     loadTourists(tourists, buses);
     loadMap(map);
+/*
+    GraphViewer *gv = new GraphViewer(1000, 1000, false);
 
-    app_interface(tourists, buses, map);
-    
-    /*
-    GraphViewer *gv = new GraphViewer(1000, 1000, true);
-
-	gv->createWindow(1000, 1000);
+	gv->createWindow(2000, 2000);
 
 	gv->defineEdgeColor("blue");
 	gv->defineVertexColor("yellow");
-    g.getGraphInfo();
-    std::vector<int> path;
-    g.dijkstraShortestPath(1241362560);
-    path = g.getPath(1241362560, 1241362657);
-    cout << path.size() << endl;
-    cout << "Hello" << endl;
-    g.displayPath(gv, path);
-    */
-    
+
+	map.displayGraph(gv);
+	gv->rearrange();
+*/
+    app_interface(tourists, buses, map);
+
     exit(0);
 }

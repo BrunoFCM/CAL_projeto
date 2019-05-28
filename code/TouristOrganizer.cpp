@@ -45,13 +45,13 @@ pair<int,int> getBestCombination(const GroupSet &groups){
     return result;
 }
 
-void noOrganizationSet(vector<Bus> &buses, vector<Tourist *> tourists){
+void noOrganizationSet(vector<Bus*> &buses, vector<Tourist *> &tourists){
     for(unsigned int i = 0; i < tourists.size(); ++i){
-        buses[0].addPassenger(tourists[i]);
+        buses[0]->addPassenger(tourists[i]);
     }
 }
 
-void infiniteCapacityOrganize(vector<Bus> &buses, GroupSet &groups){
+void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
     if(groups.size() == 1){
         Group group = **(groups.begin());
         group.setContentsTo(buses[0]);
@@ -110,7 +110,7 @@ CombinationQueue getCombinationOrder(const GroupSet &groups){
 }
 
 //This function assumes that |tourists| <= sum(busCapacity)
-bool finiteCapacityOrganize(vector<Bus> &buses, GroupSet &groups){
+bool finiteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
     if(groups.size() == 1){
         Group group = **(groups.begin());
         group.setContentsTo(buses[0]);

@@ -32,7 +32,7 @@ public:
     double getCompatibility(const Group * group) const;
     double getCompatibility(Group * group, const Graph &graph) ;
     pair<int,double> getBestPair() const;
-    void setContentsTo(Bus &bus);
+    void setContentsTo(Bus *bus);
 };
 
 class GroupEqual {

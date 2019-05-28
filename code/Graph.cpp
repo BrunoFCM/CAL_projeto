@@ -103,10 +103,16 @@ void Graph::dijkstraShortestPath(const int &origin) {
 vector<int> Graph::getPath(const int &dest) const {
     vector<int> res;
     auto v = findVertex(dest);
-    if (v == nullptr || v->dist == INF) // missing or disconnected
+    if(v == nullptr){
+    	cout << "WE HAVE HIM CHIEF, HE'S " << dest << endl;
+    }
+    if (v == nullptr || v->dist == INF){ // missing or disconnected
+    	cout << "FUCK" << endl;
         return res;
-    for ( ; v != nullptr; v = v->path)
+    }
+    for ( ; v != nullptr; v = v->path){
         res.push_back(v->id);
+    }
     reverse(res.begin(), res.end());
     return res;
 }
@@ -175,51 +181,47 @@ void Graph::getGraphInfo(string nodes, string edges) {
         linestream >> idNoDestino;
         this->addEdge(idAresta, idNoOrigem, idNoDestino);
         idAresta++;
+        this->addEdge(idAresta, idNoDestino, idNoOrigem);
+        idAresta++;
     }
 
     inFile.close();
 }
 
 void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
+	int offsetX = findVertex(path[0])->getX(), offsetY = findVertex(path[0])->getY();
 
 	for(unsigned int i = 0; i < path.size(); i++){
 		Vertex *v = findVertex(path[i]);
 		cout << path[i] << endl;
 
-		gv->addNode(path[i], v->getX(), v->getY());
+		gv->addNode(path[i], v->getX() - offsetX, v->getY() - offsetY);
 		if(i != path.size() - 1){
 			gv->addEdge(i, path[i], path[i+1], EdgeType::DIRECTED);
 		}
 	}
 	
+	gv->rearrange();
 }
 
+void Graph::displayGraph(GraphViewer *gv){
+	int edgeId = 0;
 
-Graph Graph::getTranspose() {
-    Graph g = *this;
+	int offsetX = (*vertexSet.begin())->X, offsetY = (*vertexSet.begin())->Y;
 
-    Vertex *orig;
-    Vertex *dest;
-    int id;
-    double weight;
+	for(auto i = vertexSet.begin(); i != vertexSet.end(); ++i){
+		Vertex * v = *i;
+		gv->addNode(v->getId(), v->getX() - offsetX, v->getY() - offsetY);
+	}
 
-    int iterator;
+	for(auto i = vertexSet.begin(); i != vertexSet.end(); ++i){
+		Vertex * v = *i;
+		for(unsigned j = 0; j < v->adj.size(); ++j){
+			gv->addEdge(++edgeId, v->id, v->adj[j].dest->id, EdgeType::DIRECTED);
+		}
+	}
 
-    for (Vertex *v : g.vertexSet) {
-        dest = v;
-        iterator = 0;
-        for (Edge e : v->adj) {
-            orig = e.dest;
-            id = e.id;
-            weight = e.weight;
-
-            v->adj.erase(v->adj.begin() + iterator);
-            orig->addEdge(id, dest, weight);
-            iterator++;
-        }
-    }
-
-    return g;
+	gv->rearrange();
 }
 
 void Graph::DFS(const int &s, stack<int> *stack) {
@@ -227,58 +229,61 @@ void Graph::DFS(const int &s, stack<int> *stack) {
     v->visited = true;
 
     for (Edge e : v->adj) {
-        if (e.dest->visited == false) this->DFS(e.dest->id, stack);
+        if (e.dest->visited == false)
+        	this->DFS(e.dest->id, stack);
     }
 
     stack->push(s);
 }
 
-void Graph::visitComponents(const int &s) {
+void Graph::visitComponents(const int &s, unordered_set<int> *comp) {
     Vertex *v = this->findVertex(s);
-    v->visited = true;
+    	v->visited = true;
 
-    for (Edge e : v->adj) {
-        if (e.dest->visited == false) {
-            this->visitComponents(e.dest->id);
-        }
-    }
+   	for (Edge e : v->adj) {
+       	if (e.dest->visited == false)
+       		this->visitComponents(e.dest->id, comp);
+   	}
+
+   	comp->insert(s);
 }
 
-void Graph::eraseNotConnected(const int &start) {
-    stack<int> stack;
+void Graph::eraseNotConnected(unordered_set<int> max_set) {
+	for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end();) {
+	        /* ALL UNVISITED VERTEXES */
+	        if (max_set.find((*it_vertex)->getId()) == max_set.end()) {
+	            for (vertex_set_t::iterator it_vertex_orig = this->vertexSet.begin(); it_vertex_orig != this->vertexSet.end(); it_vertex_orig++) {
+	                /* ALL VISITED VERTEXES */
+	                if (max_set.find((*it_vertex)->getId()) != max_set.end()) {
+	                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end();) {
+	                        if ((*it_edge).dest == (*it_vertex)) {
+	                            /*REMOVE UNUSED EDGE*/
+	                            it_edge = (*it_vertex_orig)->adj.erase(it_edge);
+	                        }else{
+	                            ++it_edge;
+	                        }
+	                    }
+	                }
+	            }
+	            /* REMOVE VERTEX */
+	            it_vertex = this->vertexSet.erase(it_vertex);
+	        }else{
+	            ++it_vertex;
+	        }
+	    }
+}
 
-    /* PUSH IN REVERSE ORDER */
+unordered_set<int> Graph::getComponents(const int &start) {
+    stack<int> stack;
+    unordered_set<int> set;
+
     this->unvisit();
     this->DFS(start, &stack);
 
-    Graph gr = getTranspose();
-
-    /* POP FIRST TO GET CONNECTED GRAPH */
     this->unvisit();
-    gr.visitComponents(start);
+    this->visitComponents(start, &set);
 
-    for (vertex_set_t::iterator it_vertex = this->vertexSet.begin(); it_vertex != this->vertexSet.end();) {
-        /* ALL UNVISITED VERTEXES */
-        if (!(*it_vertex)->visited) {
-            for (vertex_set_t::iterator it_vertex_orig = this->vertexSet.begin(); it_vertex_orig != this->vertexSet.end(); it_vertex_orig++) {
-                /* ALL VISITED VERTEXES */
-                if ((*it_vertex_orig)->visited) {
-                    for (vector<Edge>::iterator it_edge = (*it_vertex_orig)->adj.begin(); it_edge != (*it_vertex_orig)->adj.end();) {
-                        if ((*it_edge).dest == (*it_vertex)) {
-                            /*REMOVE UNUSED EDGE*/
-                            it_edge = (*it_vertex_orig)->adj.erase(it_edge);
-                        }else{
-                            ++it_edge;
-                        }
-                    }
-                }
-            }
-            /* REMOVE VERTEX */
-            it_vertex = this->vertexSet.erase(it_vertex);
-        }else{
-            ++it_vertex;
-        }
-    }
+    return set;
 }
 
 void Graph::unvisit() {
@@ -287,11 +292,59 @@ void Graph::unvisit() {
     }
 }
 
+vector<int> Graph::getCircularPath(vector<int> &poi){
+	int terminal = poi[0];
+	poi.erase(poi.begin());
+
+	vector<int> path;
+
+	path.push_back(terminal);
+
+	int origin = terminal;
+	while(poi.size()){
+		dijkstraShortestPath(origin);
+
+		Vertex * orig = findVertex(origin);
+
+		int closestPoi;
+		double minDistance = INF;
+		for(unsigned int i = 0; i < poi.size(); ++i){
+			double distance = orig->distanceTo(findVertex(poi[i]));
+			if(distance < minDistance){
+				closestPoi = i;
+				minDistance = distance;
+			}
+		}
+
+		vector<int> subPath = getPath(poi[closestPoi]);
+
+		for(unsigned int i = 1; i < subPath.size(); ++i){
+			path.push_back(subPath[i]);
+		}
+
+		origin = poi[closestPoi];
+
+		poi.erase(poi.begin() + closestPoi);
+	}
+
+	dijkstraShortestPath(origin);
+
+	vector<int> subPath = getPath(terminal);
+
+	for(unsigned int i = 1; i < subPath.size(); ++i){
+		path.push_back(subPath[i]);
+	}
+
+	return path;
+}
+
 /******************EDGE*********************/
 Edge::Edge(int id, Vertex *d, double w) : id(id), dest(d), weight(w) {}
 
 /******************VERTEX*********************/
-Vertex::Vertex(int in, const double x, const double y) : id(in), X(x), Y(y) {}
+Vertex::Vertex(int in, const double x, const double y) : id(in), X(x), Y(y) {
+	visited = false;
+}
 
 /*
  * Auxiliary function to add an outgoing edge to a vertex (this),

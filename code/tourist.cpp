@@ -1,6 +1,18 @@
 #include "tourist.hpp"
 using namespace std;
 
+int Tourist::incremented_id = 0;
+
+Tourist::Tourist(){
+	this->id = ++incremented_id;
+	this->name = "Tourist" + to_string(this->id);
+}
+
+Tourist::Tourist(string name){
+	this->id = ++incremented_id;
+	this->name = name;
+}
+
 Tourist::Tourist(int id, string name) {
     this->id = id;
     this->name = name;
