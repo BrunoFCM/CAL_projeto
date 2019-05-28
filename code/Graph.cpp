@@ -103,11 +103,8 @@ void Graph::dijkstraShortestPath(const int &origin) {
 vector<int> Graph::getPath(const int &dest) const {
     vector<int> res;
     auto v = findVertex(dest);
-    if(v == nullptr){
-    	cout << "WE HAVE HIM CHIEF, HE'S " << dest << endl;
-    }
+
     if (v == nullptr || v->dist == INF){ // missing or disconnected
-    	cout << "FUCK" << endl;
         return res;
     }
     for ( ; v != nullptr; v = v->path){
@@ -136,6 +133,8 @@ void Graph::getGraphInfo(string nodes, string edges) {
     double X = 0;
     double Y = 0;
 
+    double offsetX = 0, offsetY = 0;
+
     getline(inFile, line);
     while (getline(inFile, line)) {
         stringstream linestream(line);
@@ -151,7 +150,13 @@ void Graph::getGraphInfo(string nodes, string edges) {
 
         getline(linestream, data, ',');
         linestream >> Y;
-        this->addVertex(idNo, X, Y);
+
+        if(offsetX == 0 && offsetY == 0){
+        	offsetX = X;
+        	offsetY = Y;
+        }
+
+        this->addVertex(idNo, X - offsetX, Y - offsetY);
     }
 
     inFile.close();
@@ -189,13 +194,11 @@ void Graph::getGraphInfo(string nodes, string edges) {
 }
 
 void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
-	int offsetX = findVertex(path[0])->getX(), offsetY = findVertex(path[0])->getY();
 
 	for(unsigned int i = 0; i < path.size(); i++){
 		Vertex *v = findVertex(path[i]);
-		cout << path[i] << endl;
 
-		gv->addNode(path[i], v->getX() - offsetX, v->getY() - offsetY);
+		gv->addNode(path[i], v->getX(), v->getY());
 		if(i != path.size() - 1){
 			gv->addEdge(i, path[i], path[i+1], EdgeType::DIRECTED);
 		}
@@ -207,11 +210,9 @@ void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
 void Graph::displayGraph(GraphViewer *gv){
 	int edgeId = 0;
 
-	int offsetX = (*vertexSet.begin())->X, offsetY = (*vertexSet.begin())->Y;
-
 	for(auto i = vertexSet.begin(); i != vertexSet.end(); ++i){
 		Vertex * v = *i;
-		gv->addNode(v->getId(), v->getX() - offsetX, v->getY() - offsetY);
+		gv->addNode(v->getId(), v->getX(), v->getY());
 	}
 
 	for(auto i = vertexSet.begin(); i != vertexSet.end(); ++i){
@@ -374,5 +375,5 @@ double Vertex::getQueueIndex() const { return this->queueIndex;}
 void Vertex::setQueueIndex(int queueIndex) { this->queueIndex = queueIndex;}
 
 double Vertex::distanceTo(const Vertex *v) {
-    return sqrt((v->getX() * v->getX()) + (v->getY() * v->getY()));
+    return sqrt((X - v->X) * (X - v->X) + (Y - v->Y) * (Y - v->Y));
 }

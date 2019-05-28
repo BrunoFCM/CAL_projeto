@@ -4,10 +4,11 @@
 
 #include <map>
 
-int Group::incremented_id = 0;
+int Group::incremented_id;
 
 Group::Group(){
-    group_id = ++incremented_id;
+	++incremented_id;
+    group_id = incremented_id;
     addedDistance = 0;
     bestPair.second = INF;
 }
@@ -19,7 +20,8 @@ Group::Group(int id){
 }
 
 Group::Group(Tourist * tourist){
-    group_id = ++incremented_id;
+	++incremented_id;
+    group_id = incremented_id;
 
     addedDistance = 0;
     bestPair.second = INF;
@@ -30,7 +32,6 @@ Group::Group(Tourist * tourist){
 
     tourists.push_back(tourist);
 
-    cout << "inserting pois\n";
     vector<int> touristPoi = tourist->getPOI();
     for(unsigned int i = 0; i < touristPoi.size(); ++i){
         POI.insert(touristPoi[i]);
@@ -71,8 +72,10 @@ double Group::getAddedDistance() const{
     return addedDistance;
 }
 
-Group Group::merge(const Group &group) const {
+Group Group::merge(const Group &group, GroupSet &groups) const {
     Group result;
+    result.group_id = ++incremented_id;
+    cout << "NEW ID " << incremented_id << endl;
 
     for (unsigned int i = 0; i < group.tourists.size(); ++i) {
         result.tourists.push_back(group.tourists[i]);
@@ -87,13 +90,19 @@ Group Group::merge(const Group &group) const {
     }
 
     for (auto i = group.compatibilities.begin(); i != group.compatibilities.end(); ++i){
-        auto duplicate = result.compatibilities.find(i->first);
+        auto duplicate = result.compatibilities.find((*i).first);
 
         if(duplicate != result.compatibilities.end()){
-            if(i->second < duplicate->second){
-                duplicate->second = i->second;
-            }
+        	(*duplicate).second += (*i).second;
         }
+    }
+
+    for(auto i = result.compatibilities.begin(); i != result.compatibilities.end(); ++i){
+    	int id = (*i).first;
+
+    	Group * g = *(groups.find(id));
+
+    	g->addCompatibility(result.group_id, (*i).second);
     }
 
     auto mergeCompatibility = result.compatibilities.find(group_id);
@@ -108,8 +117,6 @@ Group Group::merge(const Group &group) const {
     for (auto i = group.POI.begin(); i != group.POI.end(); ++i){
         result.POI.insert(*i);
     }
-
-    
 
     return result;
 }
@@ -135,7 +142,7 @@ double Group::getCompatibility(Group * group, const Graph &graph) {
     auto found = compatibilities.find(group->group_id);
 
     if(found != compatibilities.end()){
-        return found->second;
+        return (*found).second;
     }
     else{
         for(auto i = POI.begin(); i != POI.end(); ++i){
@@ -153,7 +160,7 @@ double Group::getCompatibility(Group * group, const Graph &graph) {
                 }
 
                 double distance = iVertex->distanceTo(jVertex);
-        
+
                 if(distance < min){
                     min = distance;
 
@@ -209,9 +216,6 @@ double Group::getCompatibility(Group * group, const Graph &graph) {
         group->bestPair.second = compatibility;
     }
 
-    cout << "Compatibility(expected):" << this->group_id << "-" << group->group_id << endl;
-    cout << "Compatibility(found):" << this->group_id << "-" << bestPair.first << endl;
-
     return compatibility;
 }
 
@@ -219,7 +223,8 @@ pair<int,double> Group::getBestPair() {
 	if(bestPair.first == 0){
 		bestPair.second = INF;
 
-		for(pair<int,double> peer : compatibilities){
+		for(auto i = compatibilities.begin(); i != compatibilities.end(); ++i){
+			pair<int,double> peer = (*i);
 			if(peer.second < bestPair.second){
 				bestPair.first = peer.first;
 				bestPair.second = peer.second;
@@ -248,11 +253,11 @@ void Group::removeCompatibility(int id){
 	if(bestPair.first == id){
 		bestPair.first = 0;
 	}
-	compatibilities.erase(id);
+	cout << compatibilities.erase(id) << endl;
 }
 
 void Group::addCompatibility(int id, double dist){
-	if(bestPair.second < dist){
+	if(bestPair.second > dist){
 		bestPair.first = id;
 		bestPair.second = dist;
 	}

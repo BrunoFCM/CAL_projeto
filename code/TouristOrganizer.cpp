@@ -22,16 +22,8 @@ void getCompatibilities(GroupSet & groups, const Graph &graph){
     for(auto i = groups.begin(); i != groups.end(); ++i){
         auto j = i; ++j;
 
-        if((*i)->getId() == 0){
-			cout << "i fucked" << endl;
-		}
-
         for(; j != groups.end(); ++j){
-        	if((*j)->getId() == 0){
-				cout << "j fucked" << endl;
-			}
             (*i)->getCompatibility(*j, graph);
-            cout << (*i)->getId() << "-" << (*j)->getId() << endl;
         }
     }
 }
@@ -41,9 +33,8 @@ pair<int,int> getBestCombination(const GroupSet &groups){
     double min = INF;
 
     for(auto i = groups.begin(); i != groups.end(); ++i){
+    	cout << (*i)->getId() << "id" << endl;
         pair<int,double> bestCompatibility = (*i)->getBestPair();
-        
-        cout << "Found: " << (*i)->getId() << "-" << bestCompatibility.first << endl;
 
         if(bestCompatibility.second < min){
             min = bestCompatibility.second;
@@ -70,12 +61,12 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
         return;
     }
 
-    cout << "Iteration\n"; fflush(stdout);
     pair<int,int> bestPair = getBestCombination(groups);
 
-    cout << "Merged " << bestPair.first << " " << bestPair.second << "\n"; fflush(stdout);
     auto group1 = groups.find(bestPair.first);
     auto group2 = groups.find(bestPair.second);
+
+    cout << bestPair.first << "-" << bestPair.second << endl;
 
     if(group1 == groups.end()){
     	cout << "FUCK1" << endl;
@@ -84,9 +75,14 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
 		cout << "FUCK2" << endl;
 	}
 
+    Group * g1 = *group1;
+    Group * g2 = *group2;
+
     fflush(stdout);
-    Group mergedGroup = (*group1)->merge(**group2);
+    Group mergedGroup = (*group1)->merge(**group2, groups);
     Group * newGroup = new Group(mergedGroup);
+
+    cout << (*group1)->getId() << " " << (*group2)->getId() << endl;
 
     if(buses.size() >= groups.size()){
         double baseDistance = ((*group1)->getAddedDistance() < (*group2)->getAddedDistance()) ? 
@@ -103,14 +99,16 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
         }
     }
 
-	groups.erase(group1);
-	groups.erase(group2);
+	groups.erase(groups.find(g1));
+	groups.erase(groups.find(g2));
 
 	groups.insert(newGroup);
 
 	for(auto i = groups.begin(); i != groups.end(); ++i){
-		(*i)->removeCompatibility((*group1)->getId());
-		(*i)->removeCompatibility((*group2)->getId());
+		cout << "Removing " <<  g1->getId() << " from " << (*i)->getId() << endl;
+		(*i)->removeCompatibility(g1->getId());
+		cout << "Removing " <<  g2->getId() << " from " << (*i)->getId() << endl;
+		(*i)->removeCompatibility(g2->getId());
 	}
 
 
@@ -156,7 +154,7 @@ bool finiteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
         auto group1 = groups.find(combine.first);
         auto group2 = groups.find(combine.second);
 
-        Group * newGroup = new Group((*group1)->merge(**group2));
+        Group * newGroup = new Group((*group1)->merge(**group2, groups));
 
         if(buses.size() >= groups.size()){
             double baseDistance = ((*group1)->getAddedDistance() < (*group2)->getAddedDistance()) ? 

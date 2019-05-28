@@ -8,6 +8,8 @@
 #include <map>
 #include <unordered_set>
 
+class GroupSet;
+
 class Group {
     int group_id;
     static int incremented_id;
@@ -28,7 +30,7 @@ public:
     int getId() const;
     void setAddedDistance(const Graph &graph);
     double getAddedDistance() const;
-    Group merge(const Group &group) const;
+    Group merge(const Group &group, GroupSet &groups) const;
     double getCompatibility(const Group * group) const;
     double getCompatibility(Group * group, const Graph &graph) ;
     pair<int,double> getBestPair();

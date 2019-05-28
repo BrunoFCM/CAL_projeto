@@ -2,6 +2,8 @@
 using namespace std;
 
 int main() {
+	srand (time(NULL));
+
     vector<Tourist*> tourists;
     vector<Bus*> buses;
     Graph map;

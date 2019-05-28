@@ -3,8 +3,6 @@
 
 
 Tourist * generateTourist(const Graph &graph){
-	srand (time(NULL));
-
 	Tourist * tourist = new Tourist();
 
 	vertex_set_t vSet = graph.getVertexSet();

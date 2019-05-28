@@ -126,31 +126,39 @@ void check_bus(vector<Bus*> &buses) {
 }
 
 void get_path(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map) {
-    int op;
-	cout << "Choose bus [0-" << buses.size() - 1 << "]\n> ";
-	cin >> op;
-	if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
-	else if(op >= 0 && (unsigned)op < buses.size()){
-		Bus* b = buses.at(op);
-		vector<int> poi = b->getPOI();
+	cout << "\nShowing path(s)\n\n";
 
-		GraphViewer *gv = new GraphViewer(1000, 1000, false);
+	GraphViewer *gv = new GraphViewer(1000, 1000, false);
+	gv->createWindow(1000, 1000);
 
-		gv->createWindow(1000, 1000);
+	for(unsigned int i = 0; i < buses.size(); ++i){
+		Bus* bus = buses[i];
+		vector<int> poi = bus->getPOI();
 
 		gv->defineEdgeColor("blue");
-		gv->defineVertexColor("yellow");
+		switch(i % 13){
+		case 0:	gv->defineVertexColor("BLUE");		break;
+		case 1:	gv->defineVertexColor("RED");		break;
+		case 2:	gv->defineVertexColor("PINK");		break;
+		case 3:	gv->defineVertexColor("BLACK");		break;
+		case 4:	gv->defineVertexColor("WHITE");		break;
+		case 5:	gv->defineVertexColor("ORANGE");	break;
+		case 6:	gv->defineVertexColor("YELLOW");	break;
+		case 7:	gv->defineVertexColor("GREEN");		break;
+		case 8:	gv->defineVertexColor("yellow");	break;
+		case 9:	gv->defineVertexColor("yellow");	break;
+		case 10:gv->defineVertexColor("yellow");	break;
+		case 11:gv->defineVertexColor("yellow");	break;
+		case 12:gv->defineVertexColor("yellow");	break;}
+
+		if(poi.size() == 0){
+			return;
+		}
 
 		vector<int> necessaryPoi = map.getCircularPath(poi);
 
-		//DEBUG
-		cout << "poisize " << necessaryPoi.size() << endl;
-		for(int i : necessaryPoi){
-			cout << i << endl;
-		}
-
 	    map.displayPath(gv, necessaryPoi);
-	}else return;
+	}
 }
 
 void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map){
@@ -161,39 +169,26 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map){
     if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
     else{
     	switch(op){
-    	case 1:{
-    		noOrganizationSet(buses, tourists);
-    		break;
-    	}
-    	case 2:{
-    		GroupSet gSet = getGroupSet(tourists);
-    		cout << "Groups gotted\n"; fflush(stdout);
-    		getCompatibilities(gSet, map);
-    		cout << "Compatibilities gotted\n"; fflush(stdout);
-    		infiniteCapacityOrganize(buses, gSet);
-    		break;
-    	}
-    	case 3:{
-    		GroupSet gSet = getGroupSet(tourists);
-    		getCompatibilities(gSet, map);
-    		finiteCapacityOrganize(buses, gSet);
-    		break;
-    	}
+			case 1:{
+				noOrganizationSet(buses, tourists);
+				break;
+			}
+			case 2:{
+				Group::resetId();
+				GroupSet gSet = getGroupSet(tourists);
+				getCompatibilities(gSet, map);
+				infiniteCapacityOrganize(buses, gSet);
+				break;
+			}
+			case 3:{
+				Group::resetId();
+				GroupSet gSet = getGroupSet(tourists);
+				getCompatibilities(gSet, map);
+				finiteCapacityOrganize(buses, gSet);
+				break;
+			}
     	}
     }
-
-    
-    cout << "Choose bus [0-" << buses.size()-1 << "]\n> ";
-    cin >> op;
-    if (std::cin.fail()) { cin.clear(); cin.ignore(1000000, '\n'); return;}
-    else if(op >= 0 && op < buses.size()){
-        Bus* b = buses.at(op);
-        int i = 0;
-        cout << "BUS " << b->getId() << "\tMAX CAPACITY " << b->getCap() << "\n";
-        for(Tourist* t : b->getPassengers()){
-            cout << i++ << "\t" << setw(4) << t->getId() << "\t" << t->getName();
-        }
-    }else return;
 }
 
 void random_tourist(vector<Tourist*> &tourists, Graph &map){
