@@ -9,18 +9,20 @@ int Group::incremented_id = 0;
 Group::Group(){
     group_id = ++incremented_id;
     addedDistance = 0;
+    bestPair.second = INF;
 }
 
 Group::Group(int id){
     group_id = id;
-
     addedDistance = 0;
+    bestPair.second = INF;
 }
 
 Group::Group(Tourist * tourist){
     group_id = ++incremented_id;
 
     addedDistance = 0;
+    bestPair.second = INF;
 
     if(tourist == NULL){
         return;
@@ -28,6 +30,7 @@ Group::Group(Tourist * tourist){
 
     tourists.push_back(tourist);
 
+    cout << "inserting pois\n";
     vector<int> touristPoi = tourist->getPOI();
     for(unsigned int i = 0; i < touristPoi.size(); ++i){
         POI.insert(touristPoi[i]);
@@ -206,19 +209,32 @@ double Group::getCompatibility(Group * group, const Graph &graph) {
         group->bestPair.second = compatibility;
     }
 
+    cout << "Compatibility(expected):" << this->group_id << "-" << group->group_id << endl;
+    cout << "Compatibility(found):" << this->group_id << "-" << bestPair.first << endl;
+
     return compatibility;
 }
 
-pair<int,double> Group::getBestPair() const{
+pair<int,double> Group::getBestPair() {
+	if(bestPair.first == 0){
+		bestPair.second = INF;
+
+		for(pair<int,double> peer : compatibilities){
+			if(peer.second < bestPair.second){
+				bestPair.first = peer.first;
+				bestPair.second = peer.second;
+			}
+		}
+	}
     return bestPair;
 }
 
 
 
 std::unordered_set<Group *, HashByGroupId, GroupEqual>::iterator GroupSet::find(int id){
-    Group * dummy = new Group(id);
+    Group dummy(id);
 
-    return find(dummy);
+    return find(&dummy);
 }
 
 void Group::setContentsTo(Bus *bus){
@@ -226,4 +242,19 @@ void Group::setContentsTo(Bus *bus){
     {
         bus->addPassenger(tourists[i]);
     }
+}
+
+void Group::removeCompatibility(int id){
+	if(bestPair.first == id){
+		bestPair.first = 0;
+	}
+	compatibilities.erase(id);
+}
+
+void Group::addCompatibility(int id, double dist){
+	if(bestPair.second < dist){
+		bestPair.first = id;
+		bestPair.second = dist;
+	}
+	compatibilities.emplace(id,dist);
 }

@@ -59,7 +59,6 @@ void loadMap(Graph &map){
     unordered_set<int> max_set;
     for(Vertex *v : map.getVertexSet()){
     	unordered_set<int> cur_set = map.getComponents(v->getId());
-    	cout << cur_set.size() << endl;
     	if(cur_set.size() > max_set.size()){
     		max_set = cur_set;
     	}
@@ -168,7 +167,9 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map){
     	}
     	case 2:{
     		GroupSet gSet = getGroupSet(tourists);
+    		cout << "Groups gotted\n"; fflush(stdout);
     		getCompatibilities(gSet, map);
+    		cout << "Compatibilities gotted\n"; fflush(stdout);
     		infiniteCapacityOrganize(buses, gSet);
     		break;
     	}

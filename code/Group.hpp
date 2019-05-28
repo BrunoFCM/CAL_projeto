@@ -31,8 +31,10 @@ public:
     Group merge(const Group &group) const;
     double getCompatibility(const Group * group) const;
     double getCompatibility(Group * group, const Graph &graph) ;
-    pair<int,double> getBestPair() const;
+    pair<int,double> getBestPair();
     void setContentsTo(Bus *bus);
+    void removeCompatibility(int id);
+    void addCompatibility(int id, double dist);
 };
 
 class GroupEqual {
