@@ -75,7 +75,6 @@ double Group::getAddedDistance() const{
 Group Group::merge(const Group &group, GroupSet &groups) const {
     Group result;
     result.group_id = ++incremented_id;
-    cout << "NEW ID " << incremented_id << endl;
 
     for (unsigned int i = 0; i < group.tourists.size(); ++i) {
         result.tourists.push_back(group.tourists[i]);
@@ -253,7 +252,7 @@ void Group::removeCompatibility(int id){
 	if(bestPair.first == id){
 		bestPair.first = 0;
 	}
-	cout << compatibilities.erase(id) << endl;
+	compatibilities.erase(id);
 }
 
 void Group::addCompatibility(int id, double dist){

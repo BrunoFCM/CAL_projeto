@@ -33,7 +33,6 @@ pair<int,int> getBestCombination(const GroupSet &groups){
     double min = INF;
 
     for(auto i = groups.begin(); i != groups.end(); ++i){
-    	cout << (*i)->getId() << "id" << endl;
         pair<int,double> bestCompatibility = (*i)->getBestPair();
 
         if(bestCompatibility.second < min){
@@ -66,13 +65,12 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
     auto group1 = groups.find(bestPair.first);
     auto group2 = groups.find(bestPair.second);
 
-    cout << bestPair.first << "-" << bestPair.second << endl;
 
     if(group1 == groups.end()){
-    	cout << "FUCK1" << endl;
+    	cout << "Group one not found" << endl;
     }
     if(group2 == groups.end()){
-		cout << "FUCK2" << endl;
+		cout << "Group two not found" << endl;
 	}
 
     Group * g1 = *group1;
@@ -81,8 +79,6 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
     fflush(stdout);
     Group mergedGroup = (*group1)->merge(**group2, groups);
     Group * newGroup = new Group(mergedGroup);
-
-    cout << (*group1)->getId() << " " << (*group2)->getId() << endl;
 
     if(buses.size() >= groups.size()){
         double baseDistance = ((*group1)->getAddedDistance() < (*group2)->getAddedDistance()) ? 
@@ -105,9 +101,7 @@ void infiniteCapacityOrganize(vector<Bus*> &buses, GroupSet &groups){
 	groups.insert(newGroup);
 
 	for(auto i = groups.begin(); i != groups.end(); ++i){
-		cout << "Removing " <<  g1->getId() << " from " << (*i)->getId() << endl;
 		(*i)->removeCompatibility(g1->getId());
-		cout << "Removing " <<  g2->getId() << " from " << (*i)->getId() << endl;
 		(*i)->removeCompatibility(g2->getId());
 	}
 

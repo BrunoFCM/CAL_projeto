@@ -294,6 +294,7 @@ void Graph::unvisit() {
 }
 
 vector<int> Graph::getCircularPath(vector<int> &poi){
+	clock_t begin = clock();
 	int terminal = poi[0];
 	poi.erase(poi.begin());
 
@@ -303,7 +304,12 @@ vector<int> Graph::getCircularPath(vector<int> &poi){
 
 	int origin = terminal;
 	while(poi.size()){
+
+		clock_t dijkstra_begin = clock();
 		dijkstraShortestPath(origin);
+		clock_t dijkstra_end = clock();
+		double dijkstra_elapsed_secs = 1000*(dijkstra_end - dijkstra_begin) / CLOCKS_PER_SEC;
+		cout << "Dijkstra elapsed time is:" << "" << dijkstra_elapsed_secs << endl;
 
 		Vertex * orig = findVertex(origin);
 
@@ -328,13 +334,21 @@ vector<int> Graph::getCircularPath(vector<int> &poi){
 		poi.erase(poi.begin() + closestPoi);
 	}
 
+	clock_t dijkstra_begin = clock();
 	dijkstraShortestPath(origin);
+	clock_t dijkstra_end = clock();
+	double dijkstra_elapsed_secs = 1000*(dijkstra_end - dijkstra_begin) / CLOCKS_PER_SEC;
+	cout << "Dijkstra elapsed time is:" << "" << dijkstra_elapsed_secs << endl;
 
 	vector<int> subPath = getPath(terminal);
 
 	for(unsigned int i = 1; i < subPath.size(); ++i){
 		path.push_back(subPath[i]);
 	}
+
+	clock_t end = clock();
+	double total_elapsed_secs = 1000*(end - begin) / CLOCKS_PER_SEC;
+	cout << "Total elapsed time is:" << "" << total_elapsed_secs << endl;
 
 	return path;
 }

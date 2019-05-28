@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <stack>
 #include <string>
+#include <ctime>
 #include <set>
 #include <unordered_set>
 #include "graphviewer.h"

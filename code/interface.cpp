@@ -176,8 +176,15 @@ void get_groups(vector<Tourist*> &tourists, vector<Bus*> &buses, Graph &map){
 			case 2:{
 				Group::resetId();
 				GroupSet gSet = getGroupSet(tourists);
+				clock_t begin = clock();
 				getCompatibilities(gSet, map);
+				clock_t compatibility_end = clock();
 				infiniteCapacityOrganize(buses, gSet);
+				clock_t end = clock();
+				double compatibility_elapsed_secs = 1000*(compatibility_end - begin) / CLOCKS_PER_SEC;
+				double grouping_elapsed_secs = 1000*(end - compatibility_end) / CLOCKS_PER_SEC;
+				cout << "Compatibility elapsed time is:" << "" << compatibility_elapsed_secs << endl;
+				cout << "Grouping elapsed time is:" << "" << grouping_elapsed_secs << endl;
 				break;
 			}
 			case 3:{
