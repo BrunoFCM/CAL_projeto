@@ -17,6 +17,7 @@ class Bus {
     unsigned long long getCap() const;
     vector<Tourist*> getPassengers() const;
     vector<int> getPOI() const;
+    void emptyBus();
 
     void addPassenger(Tourist* tourist);
 };

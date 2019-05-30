@@ -30,3 +30,8 @@ vector<int> Bus::getPOI() const{
 
 	return out;
 }
+
+void Bus::emptyBus(){
+	this->passengers.clear();
+	this->POI.clear();
+}

@@ -1,6 +1,8 @@
 #include "Graph.hpp"
 using namespace std;
 
+static int drawnEdge = 0;
+
 /******************GRAPH*********************/
 int Graph::getNumVertex() const { return vertexSet.size(); }
 
@@ -200,7 +202,7 @@ void Graph::displayPath(GraphViewer *gv, std::vector<int> path){
 
 		gv->addNode(path[i], v->getX(), v->getY());
 		if(i != path.size() - 1){
-			gv->addEdge(i, path[i], path[i+1], EdgeType::DIRECTED);
+			gv->addEdge(++drawnEdge, path[i], path[i+1], EdgeType::DIRECTED);
 		}
 	}
 	
