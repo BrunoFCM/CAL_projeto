@@ -1,0 +1,2 @@
+Utilizamos o Eclipse para a realização deste trabalho.
+Durante os testes utilizamos mapas com cidades mais pequenas, mas o programa aceita qualquer mapa, desde que se altere as respetivas macro no header "interface.hpp".
